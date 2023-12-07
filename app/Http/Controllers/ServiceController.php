@@ -48,4 +48,45 @@ class ServiceController extends Controller
             }
         }
     }
+
+    public function getPriceByServiceIdAndDeliveryTime(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $serviceId = (is_null($request->serviceId) || empty($request->serviceId)) ? "" : $request->serviceId;
+        $deliveryTimeType = (is_null($request->deliveryTimeType) || empty($request->deliveryTimeType)) ? "" : $request->deliveryTimeType;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($serviceId == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Service Id is required.");
+        } else if ($deliveryTimeType == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Delivery Time Type is required.");
+        } else {
+
+            try {
+                $serviceInfo = $this->Service->find_by_service_id($serviceId);
+
+                $servicePrice = 0;
+                if ($deliveryTimeType == 1) {
+                    $servicePrice = $serviceInfo->price_1;
+                } else if ($deliveryTimeType == 2) {
+                    $servicePrice = $serviceInfo->price_2;
+                } else if ($deliveryTimeType == 3) {
+                    $servicePrice = $serviceInfo->price_3;
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Delivery Time Type.");
+                }
+
+                $data = array();
+                $data['servicePrice'] = $servicePrice;
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $data);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
 }

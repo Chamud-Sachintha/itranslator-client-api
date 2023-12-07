@@ -23,3 +23,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('signin', [AuthController::class, 'authenticateUser']);
 Route::post('signup', [AuthController::class, 'signUpNewUser']);
 Route::middleware('authToken')->post('get-service-list', [ServiceController::class, 'getTranslateServiceList']);
+Route::middleware('authToken')->post('get-service-price-by-delivery-time', [ServiceController::class, 'getPriceByServiceIdAndDeliveryTime']);
