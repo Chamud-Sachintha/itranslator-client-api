@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderItemsController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,3 +25,5 @@ Route::post('signin', [AuthController::class, 'authenticateUser']);
 Route::post('signup', [AuthController::class, 'signUpNewUser']);
 Route::middleware('authToken')->post('get-service-list', [ServiceController::class, 'getTranslateServiceList']);
 Route::middleware('authToken')->post('get-service-price-by-delivery-time', [ServiceController::class, 'getPriceByServiceIdAndDeliveryTime']);
+Route::middleware('authToken')->post('place-order-with-bslip', [OrderItemsController::class, 'placeNewOrderWithBankSlip']);
+Route::middleware('authToken')->post('get-order-requests', [OrderItemsController::class, 'getOrderRequests']);
