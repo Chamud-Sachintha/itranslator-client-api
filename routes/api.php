@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NotaryServiceOrderController;
 use App\Http\Controllers\OrderItemsController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Http\Request;
@@ -27,3 +28,5 @@ Route::middleware('authToken')->post('get-service-list', [ServiceController::cla
 Route::middleware('authToken')->post('get-service-price-by-delivery-time', [ServiceController::class, 'getPriceByServiceIdAndDeliveryTime']);
 Route::middleware('authToken')->post('place-order-with-bslip', [OrderItemsController::class, 'placeNewOrderWithBankSlip']);
 Route::middleware('authToken')->post('get-order-requests', [OrderItemsController::class, 'getOrderRequests']);
+Route::middleware('authToken')->post('get-main-notary-cat-list', [NotaryServiceOrderController::class, 'getMainNotaryCategoryList']);
+Route::middleware('authToken')->post('get-first-cat-list-by-main-cat-code', [NotaryServiceOrderController::class, 'getFirstSubCategoryByMainCategory']);
