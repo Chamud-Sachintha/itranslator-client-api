@@ -27,12 +27,12 @@ class NotaryServiceOrderController extends Controller
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-        $mainCategory = (is_null($request->mainCategory) || empty($request->mainCategory)) ? "" : $request->mainCategory;
-        $subCategory = (is_null($request->subCategory) || empty($request->subCategory)) ? "" : $request->subCategory;
+        $mainCategory = (is_null($request->mainNotaryCategory) || empty($request->mainNotaryCategory)) ? "" : $request->mainNotaryCategory;
+        $subCategory = (is_null($request->subNotaryCategory) || empty($request->subNotaryCategory)) ? "" : $request->subNotaryCategory;
         $serviceDescription = (is_null($request->serviceDescription) || empty($request->serviceDescription)) ? "" : $request->serviceDescription;
         $firstDoc = (is_null($request->firstDoc) || empty($request->firstDoc)) ? "" : $request->firstDoc;
         $secondDoc = (is_null($request->secondDoc) || empty($request->secondDoc)) ? "" : $request->secondDoc;
-        $thirdDoc = (is_null($request->thidDoc) || empty($request->thirdDoc)) ? "" : $request->thirdDoc;
+        $thirdDoc = (is_null($request->thirdDoc) || empty($request->thirdDoc)) ? "" : $request->thirdDoc;
         $dateOfSigning = (is_null($request->dateOfSigning) || empty($request->dateOfSigning)) ? "" : $request->dateOfSigning;
         $startDate = (is_null($request->startDate) || empty($request->startDate)) ? "" : $request->startDate;
         $endDate = (is_null($request->endDate) || empty($request->endDate)) ? "" : $request->endDate;
@@ -44,6 +44,7 @@ class NotaryServiceOrderController extends Controller
         $lg = (is_null($request->lg) || empty($request->lg)) ? "" : $request->lg;
         $district = (is_null($request->district) || empty($request->district)) ? "" : $request->district;
         $lro = (is_null($request->lro) || empty($request->lro)) ? "" : $request->lro; 
+        $notaryServicePersonList = (is_null($request->notaryServicePersonList) || empty($request->notaryServicePersonList)) ? "" : $request->notaryServicePersonList;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -57,7 +58,37 @@ class NotaryServiceOrderController extends Controller
                 $notaryServiceOrder = array();
 
                 if ($isValidCategory) {
-                    
+                    $notaryServiceOrder['mainCategory'] = $mainCategory;
+                    $notaryServiceOrder['subCategory'] = $subCategory;
+                    $notaryServiceOrder['descriptionOfService'] = $serviceDescription;
+                    $notaryServiceOrder['firstDoc'] = $this->decodeImageData($firstDoc);
+                    $notaryServiceOrder['secondDoc'] = $this->decodeImageData($secondDoc);
+                    $notaryServiceOrder['thirdDoc'] = $this->decodeImageData($thirdDoc);
+                    $notaryServiceOrder['dateOfSigning'] = strtotime($dateOfSigning);
+                    $notaryServiceOrder['startDate'] = strtotime($startDate);
+                    $notaryServiceOrder['endDate'] = strtotime($endDate);
+                    $notaryServiceOrder['value'] = $value;
+                    $notaryServiceOrder['monthlyRent'] = $monthlyRent;
+                    $notaryServiceOrder['advanceAmount'] = $advanceAmt;
+                    $notaryServiceOrder['von'] = $VODNumber;
+                    $notaryServiceOrder['divisionalSec'] = $ds;
+                    $notaryServiceOrder['localGov'] = $lg;
+                    $notaryServiceOrder['district'] = $district;
+                    $notaryServiceOrder['lro'] = $lro;
+                    $notaryServiceOrder['notaryPersonJson'] = json_encode($notaryServicePersonList);
+                    $notaryServiceOrder['paymentStatus'] = 0;
+                    $notaryServiceOrder['orderStatus'] = 0;
+                    $notaryServiceOrder['createTime'] = $this->AppHelper->get_date_and_time();
+                    $notaryServiceOrder['modifiedTime'] = $this->AppHelper->get_date_and_time();
+
+                    $resp = $this->NotaryServiceOrder->add_log($notaryServiceOrder);
+
+                    if ($resp) {
+                        return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                    } else {
+                        return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                    }
+
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Category is not Valid");
                 }
@@ -123,6 +154,20 @@ class NotaryServiceOrderController extends Controller
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
         }
+    }
+
+    private function decodeImageData($base64Array) {
+
+        $jsonEncodeImageData = array();
+
+        foreach ($base64Array as $key => $value) {
+            $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value));
+            $imageFileName = 'image_' . time() . $key . '.png';
+
+            $jsonEncodeImageData[$key] = $imageFileName;
+        }
+
+        return json_encode($jsonEncodeImageData);
     }
 
     private function validateCategories($mainCategoryCode, $subCategoryCode) {
