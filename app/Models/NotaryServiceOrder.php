@@ -10,6 +10,8 @@ class NotaryServiceOrder extends Model
     use HasFactory;
 
     protected $fillable = [
+        'client_id',
+        'invoice_no',
         'main_category',
         'sub_category',
         'description_of_service',
@@ -35,6 +37,8 @@ class NotaryServiceOrder extends Model
     ];
 
     public function add_log($notaryOrderInfo) {
+        $map['client_id'] = $notaryOrderInfo['clientId'];
+        $map['invoice_no'] = $notaryOrderInfo['invoiceNo'];
         $map['main_category'] = $notaryOrderInfo['mainCategory'];
         $map['sub_category'] = $notaryOrderInfo['subCategory'];
         $map['description_of_service'] = $notaryOrderInfo['descriptionOfService'];
@@ -59,5 +63,11 @@ class NotaryServiceOrder extends Model
         $map['modified_time'] = $notaryOrderInfo['modifiedTime'];
 
         return $this->create($map);
+    }
+
+    public function get_order_requests($clientId) {
+        $map['client_id'] = $clientId;
+
+        return $this->where($map)->get();
     }
 }

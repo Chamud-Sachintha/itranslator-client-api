@@ -28,7 +28,9 @@ Route::middleware('authToken')->post('get-service-list', [ServiceController::cla
 Route::middleware('authToken')->post('get-service-price-by-delivery-time', [ServiceController::class, 'getPriceByServiceIdAndDeliveryTime']);
 Route::middleware('authToken')->post('place-order-with-bslip', [OrderItemsController::class, 'placeNewOrderWithBankSlip']);
 Route::middleware('authToken')->post('get-order-requests', [OrderItemsController::class, 'getOrderRequests']);
+Route::middleware('authToken')->post('get-notary-order-list', [NotaryServiceOrderController::class, 'getNotaryServiceOrderRequests']);
 Route::middleware('authToken')->post('get-main-notary-cat-list', [NotaryServiceOrderController::class, 'getMainNotaryCategoryList']);
 Route::middleware('authToken')->post('get-first-cat-list-by-main-cat-code', [NotaryServiceOrderController::class, 'getFirstSubCategoryByMainCategory']);
 
 Route::middleware('authToken')->post('place-notary-service-order', [NotaryServiceOrderController::class, 'placeNewNotaryServiceOrder']);
+Route::middleware('authToken')->post('get-tr-order-info-by-invoice', [OrderItemsController::class, 'getTranslateOrderInfoByInvoice']);

@@ -26,4 +26,10 @@ class OrderItems extends Model
 
         return $this->create($map);
     }
+
+    public function get_by_orderId($oid) {
+        $map['order_id'] = $oid;
+
+        return $this->where($map)->get();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AppHelper {
 
@@ -33,6 +34,12 @@ class AppHelper {
 
     public function day_time() {
         return strtotime(date("Ymd"));
+    }
+
+    public function generateInvoiceNumber($type) {
+        $invoiceCode = $type . "-" . Str::random(10);
+
+        return $invoiceCode;
     }
 
     public function get_date_and_time() {

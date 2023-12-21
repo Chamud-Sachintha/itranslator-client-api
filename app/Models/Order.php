@@ -19,6 +19,7 @@ class Order extends Model
     */
 
     protected $fillable = [
+        'invoice_no',
         'client_id',
         'payment_status', 
         'order_status',
@@ -31,6 +32,7 @@ class Order extends Model
     ];
 
     public function add_log($orderDetails) {
+        $map['invoice_no'] = $orderDetails['invoiceNo'];
         $map['client_id'] = $orderDetails['clientId'];
         $map['payment_status'] = $orderDetails['paymentStatus'];
         $map['order_status'] = $orderDetails['orderStatus'];
@@ -54,5 +56,11 @@ class Order extends Model
         $map['client_id'] = $uid;
 
         return $this->where($map)->whereNotIn('order_status', [3])->get();
+    }
+
+    public function get_order_by_invoice($invoiceNo) {
+        $map['invoice_no'] = $invoiceNo;
+
+        return $this->where($map)->first();
     }
 }
