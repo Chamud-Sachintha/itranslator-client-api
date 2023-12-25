@@ -62,4 +62,9 @@ class Client extends Model
 
         return $this->where($map)->first();
     }
+
+    public function get_by_id($uid) {
+        $map['id'] = $uid;
+        return $this->where($map)->first();
+    }
 }

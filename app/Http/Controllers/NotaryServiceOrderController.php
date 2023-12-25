@@ -178,7 +178,16 @@ class NotaryServiceOrderController extends Controller
                 $resp = $this->NotaryServiceOrder->get_order_requests($client->id);
 
                 if ($resp) {
-                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $resp);
+                    $dataList = array();
+                    foreach ($resp as $key => $value) {
+                        $dataList[$key]['invoiceNo'] = $value['invoice_no'];
+                        $dataList[$key]['paymentStatus'] = $value['payment_status'];
+                        $dataList[$key]['createTime'] = $value['create_time'];
+                        $dataList[$key]['orderStatus'] = $value['order_status'];
+                        $dataList[$key]['totalAmount'] = $value['total_amount'];
+                    }
+
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }

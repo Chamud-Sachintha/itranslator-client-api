@@ -35,6 +35,7 @@ class CreateNotaryServiceOrdersTable extends Migration
             $table->string('district');
             $table->string('land_reg_office');
             $table->string('notary_person_json');
+            $table->float('total_amt');
             $table->string('payment_status');
             $table->string('order_status');
             $table->integer('create_time');

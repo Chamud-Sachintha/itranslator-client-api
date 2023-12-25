@@ -30,6 +30,7 @@ class NotaryServiceOrder extends Model
         'district',
         'land_reg_office',
         'notary_person_json',
+        'total_amt',
         'payment_status',
         'order_status',
         'create_time',

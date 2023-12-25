@@ -9,6 +9,7 @@ use App\Models\NotaryServiceOrder;
 use App\Models\Order;
 use App\Models\OrderItems;
 use App\Models\Service;
+use App\Models\TranslatedDocuments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -22,6 +23,7 @@ class OrderItemsController extends Controller
     private $NotaryServiceOrder;
     private $Service;
     private $OrderAssign;
+    private $TranslateDocument;
 
     public function __construct()
     {
@@ -32,6 +34,7 @@ class OrderItemsController extends Controller
         $this->NotaryServiceOrder = new NotaryServiceOrder();
         $this->Service = new Service();
         $this->OrderAssign = new AdminOrderAssign();
+        $this->TranslateDocument = new TranslatedDocuments();
     }
 
     public function placeNewOrderWithBankSlip(Request $request) {
@@ -190,6 +193,41 @@ class OrderItemsController extends Controller
                         $dataList[$key]['pages'] = $jsonDecodedValue->pages;
                         $dataList[$key]['createTime'] = $value['create_time'];
                         $dataList[$key]['assignedTime'] = $orderAssignInfo['create_time'];
+                    }
+
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getTranslatedDocsList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($invoiceNo == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Invoice No is required.");
+        } else {
+
+            try {
+                $order = $this->Order->get_order_by_invoice($invoiceNo);
+
+                if ($order) {
+                    $resp = $this->TranslateDocument->get_doc_list_by_order_id($order->id);
+
+                    $dataList = array();
+                    foreach ($resp as $key => $value) {
+                        $dataList[$key]['orderId'] = $value['order_id'];
+                        $dataList[$key]['document'] = $value['document'];
+                        $dataList[$key]['createTime'] = $value['create_time'];
                     }
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);

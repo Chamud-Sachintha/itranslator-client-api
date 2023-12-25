@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminMessageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NotaryServiceOrderController;
 use App\Http\Controllers\OrderItemsController;
@@ -34,3 +35,6 @@ Route::middleware('authToken')->post('get-first-cat-list-by-main-cat-code', [Not
 
 Route::middleware('authToken')->post('place-notary-service-order', [NotaryServiceOrderController::class, 'placeNewNotaryServiceOrder']);
 Route::middleware('authToken')->post('get-tr-order-info-by-invoice', [OrderItemsController::class, 'getTranslateOrderInfoByInvoice']);
+Route::middleware('authToken')->post('get-doc-list-by-order', [OrderItemsController::class, 'getTranslatedDocsList']);
+Route::middleware('authToken')->post('send-message', [AdminMessageController::class, 'sendMessageToAdmin']);
+Route::middleware('authToken')->post('get-message-list', [AdminMessageController::class, 'getAdminMessageList']);
