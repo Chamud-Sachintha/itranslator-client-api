@@ -45,6 +45,16 @@ class AppHelper {
     public function get_date_and_time() {
         return strtotime("now");
     }
+
+    public function generate_ref($length) {
+        $result = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $result .= random_int(0, 9);
+        }
+
+        return $result;
+    }
 }
 
 ?>

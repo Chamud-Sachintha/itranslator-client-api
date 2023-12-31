@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminMessageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NotaryServiceOrderController;
+use App\Http\Controllers\OnePayGateway;
 use App\Http\Controllers\OrderItemsController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ Route::post('signup', [AuthController::class, 'signUpNewUser']);
 Route::middleware('authToken')->post('get-service-list', [ServiceController::class, 'getTranslateServiceList']);
 Route::middleware('authToken')->post('get-service-price-by-delivery-time', [ServiceController::class, 'getPriceByServiceIdAndDeliveryTime']);
 Route::middleware('authToken')->post('place-order-with-bslip', [OrderItemsController::class, 'placeNewOrderWithBankSlip']);
+Route::middleware('authToken')->post('place-new-order-with-gateway', [OnePayGateway::class, 'placeNewOrderWithGateway']);
 Route::middleware('authToken')->post('get-order-requests', [OrderItemsController::class, 'getOrderRequests']);
 Route::middleware('authToken')->post('get-notary-order-list', [NotaryServiceOrderController::class, 'getNotaryServiceOrderRequests']);
 Route::middleware('authToken')->post('get-main-notary-cat-list', [NotaryServiceOrderController::class, 'getMainNotaryCategoryList']);

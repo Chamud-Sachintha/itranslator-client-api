@@ -3,41 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
-use App\Models\AdminOrderAssign;
 use App\Models\Client;
-use App\Models\NotaryServiceOrder;
 use App\Models\Order;
 use App\Models\OrderItems;
-use App\Models\Service;
-use App\Models\TranslatedDocuments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
-class OrderItemsController extends Controller
+class OnePayGateway extends Controller
 {
     private $AppHelper;
     private $Client;
     private $Order;
     private $OrderItems;
-    private $NotaryServiceOrder;
-    private $Service;
-    private $OrderAssign;
-    private $TranslateDocument;
 
     public function __construct()
     {
         $this->AppHelper = new AppHelper();
-        $this->Client = new Client();
         $this->Order = new Order();
         $this->OrderItems = new OrderItems();
-        $this->NotaryServiceOrder = new NotaryServiceOrder();
-        $this->Service = new Service();
-        $this->OrderAssign = new AdminOrderAssign();
-        $this->TranslateDocument = new TranslatedDocuments();
+        $this->Client = new Client();
     }
 
-    public function placeNewOrderWithBankSlip(Request $request) {
+    public function placeNewOrderWithGateway(Request $request) {
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
@@ -46,181 +33,60 @@ class OrderItemsController extends Controller
         $deliveryMethod = (is_null($request->deliveryMethod) || empty($request->deliveryMethod)) ? "" : $request->deliveryMethod;
         $paymentMethod = (is_null($request->paymentMethod) || empty($request->paymentMethod)) ? "" : $request->paymentMethod;
         $totalAmount = (is_null($request->totalAmount) || empty($request->totalAmount)) ? "" : $request->totalAmount;
-        $bankSlip = (is_null($request->bankSlip) || empty($request->bankSlip)) ? "" : $request->bankSlip;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
         } else if ($valueObjArray == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Service values are required.");
-        } else if ($bankSlip == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Bank Slip is required.");
+            return $this->AppHelper->responseMessageHandle(0, "Service values are required is required.");
+        } else if ($deliveryTime == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Delivery Time is Required.");
+        } else if ($deliveryMethod == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Delivery Method is required.");
         } else {
 
             try {
-
                 $client = $this->Client->find_by_token($request_token);
 
-                $orderDetails = array();
-                $orderDetails['clientId'] = $client->id;
+                $paymentInfo = array();
+                $paymentInfo['amount'] = $totalAmount;
+                $paymentInfo['reference'] = $this->AppHelper->generate_ref(10);
+                $paymentInfo['firstName'] = $client->full_name;
+                $paymentInfo['lastName'] = "Test";
+                $paymentInfo['contact'] = $client->mobile_number;
+                $paymentInfo['email'] = $client->email;
 
-                if ($bankSlip != null) {
-                    $orderDetails['paymentStatus'] = 0;
+                $response = $this->onePayGateway($paymentInfo);
 
-                    $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $bankSlip));
-                    $filename = 'image_' . time() . '.png';
+                // print($response);
 
-                    Storage::disk('public')->put($filename, $imageData);
+                // $orderDetails = array();
+                // $orderDetails['clientId'] = $client->id;
+                // $orderDetails['orderStatus'] = 0;
+                // $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
+                // $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
+                // $orderDetails['deliveryTimeType'] = $deliveryTime;
+                // $orderDetails['deliveryMethod'] = $deliveryMethod;
+                // $orderDetails['paymentMethod'] = $paymentMethod;
+                // $orderDetails['totalAmount'] = floatval($totalAmount);
 
-                    $orderDetails['bankSlip'] = $filename;
-                }
+                // $order = $this->Order->add_log($orderDetails);
 
-                $orderDetails['orderStatus'] = 0;
-                $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
-                $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
-                $orderDetails['deliveryTimeType'] = $deliveryTime;
-                $orderDetails['deliveryMethod'] = $deliveryMethod;
-                $orderDetails['paymentMethod'] = $paymentMethod;
-                $orderDetails['totalAmount'] = floatval($totalAmount);
+                // $orderItemsResp = null;
 
-                $order = $this->Order->add_log($orderDetails);
-
-                $orderItemsResp = null;
-
-                if ($order) {
+                // if ($order) {
                     
-                    $jsonArray = json_decode(json_encode($valueObjArray));
+                //     $jsonArray = json_decode(json_encode($valueObjArray));
 
-                    $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
-                }
+                //     $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
+                // }
 
-                if ($order && $orderItemsResp) {
-                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete Successfully.");
-                } else {
-                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
-                }
-            } catch (\Exception $e) {
-                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
-            }
-        }
-    }
-
-    public function getOrderRequests(Request $request) {
-
-        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
-        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-
-        if ($request_token == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Token is reuirqed.");
-        } else if ($flag == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
-        } else {
-
-            try {
-
-                $client = $this->Client->find_by_token($request_token);
-                $resp = $this->Order->get_order_requests($client->id);
-
-                if ($resp) {
-
-                    $dataList = array();
-                    foreach ($resp as $key => $value) {
-                        $dataList[$key]['invoiceNo'] = $value['invoice_no'];
-                        $dataList[$key]['paymentStatus'] = $value['payment_status'];
-                        $dataList[$key]['createTime'] = $value['create_time'];
-                        $dataList[$key]['orderStatus'] = $value['order_status'];
-                        $dataList[$key]['totalAmount'] = $value['total_amount'];
-                        $dataList[$key]['paymentType'] = $value['payment_type'];
-                    }
-
-                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
-                } else {
-                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
-                }
-            } catch (\Exception $e) {
-                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
-            }
-        }
-    }
-
-    public function getTranslateOrderInfoByInvoice(Request $request) {
-
-        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
-        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
-
-        if ($request_token == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
-        } else if ($flag == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
-        } else if ($invoiceNo == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Invoice No is required.");
-        } else {
-
-            try {
-                
-                $orderInfo = $this->Order->get_order_by_invoice($invoiceNo);
-
-                $orderAssignInfo = $this->OrderAssign->get_by_invoice_id($orderInfo->invoice_no);
-
-                if (empty($orderAssignInfo)) {
-                    return $this->AppHelper->responseMessageHandle(0, "Order is Not Taken by Admin Yet.");
-                }
-
-                if ($orderInfo) {
-                    $resp = $this->OrderItems->get_by_orderId($orderInfo->id);
-
-                    $dataList = array();
-                    foreach ($resp as $key => $value) {
-                        $serviceInfo = $this->Service->find_by_service_id($value['service_id']);
-                        $orderAssignInfo = $this->OrderAssign->get_by_invoice_id($orderInfo->invoice_no);
-                        $jsonDecodedValue = json_decode($value->json_value);
-
-                        $dataList[$key]['serviceId'] = $value['service_id'];
-                        $dataList[$key]['documentTitle'] = $serviceInfo['service_name'];
-                        $dataList[$key]['pages'] = $jsonDecodedValue->pages;
-                        $dataList[$key]['createTime'] = $value['create_time'];
-                        $dataList[$key]['assignedTime'] = $orderAssignInfo['create_time'];
-                    }
-
-                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
-                }
-            } catch (\Exception $e) {
-                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
-            }
-        }
-    }
-
-    public function getTranslatedDocsList(Request $request) {
-
-        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
-        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
-
-        if ($request_token == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
-        } else if ($flag == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
-        } else if ($invoiceNo == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Invoice No is required.");
-        } else {
-
-            try {
-                $order = $this->Order->get_order_by_invoice($invoiceNo);
-
-                if ($order) {
-                    $resp = $this->TranslateDocument->get_doc_list_by_order_id($order->id);
-
-                    $dataList = array();
-                    foreach ($resp as $key => $value) {
-                        $dataList[$key]['orderId'] = $value['order_id'];
-                        $dataList[$key]['document'] = $value['document'];
-                        $dataList[$key]['createTime'] = $value['create_time'];
-                    }
-
-                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
-                }
+                // if ($order && $orderItemsResp) {
+                //     return $this->AppHelper->responseMessageHandle(1, "Operation Complete Successfully.");
+                // } else {
+                //     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                // }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
@@ -458,6 +324,71 @@ class OrderItemsController extends Controller
             return true;
         } catch (\Exception $e) {
             return false;
+        }
+    }
+
+    private function onePayGateway($paymentInfo) {
+        $app_id = "HA26118C3C3BC0786F784";
+        $hash_salt = "U0AN118C3C3BC0786F7BF";
+        $app_token = "599dd6ba83f7cef3b1071b1503a036ca2feca6f644e8553934b77d03eb3044740b949e0eed2213b0.MFND118C3C3BC0786F7D8";
+
+        $onepay_args = array(
+        
+        "amount" => $paymentInfo['amount'], //only upto 2 decimal points
+        "currency" => "LKR", //LKR OR USD
+        "app_id"=> $app_id,
+        "reference" => $paymentInfo['reference'], //must have 10 or more digits , spaces are not allowed
+        "customer_first_name" => $paymentInfo['firstName'], // spaces are not allowed
+        "customer_last_name"=> $paymentInfo['lastName'], // spaces are not allowed
+        "customer_phone_number" => $paymentInfo['contact'], //must start with +94, spaces are not allowed
+        "customer_email" => $paymentInfo['email'], // spaces are not allowed
+        "transaction_redirect_url" => "https://exmple.lk/respones", // spaces are not allowed
+        "additional_data" => "sample" //only support string, spaces are not allowed, this will return in response also
+        );
+
+        $data=json_encode($onepay_args,JSON_UNESCAPED_SLASHES);
+
+        $data_json = $data."".$hash_salt;
+
+        $hash_result = hash('sha256',$data_json);
+
+        $curl = curl_init();
+
+        $url = 'https://merchant-api-live-v2.onepay.lk/api/ipg/gateway/request-payment-link/?hash=';
+        $url .= $hash_result;
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_HTTPHEADER => array(
+                'Authorization:'."".$app_token,
+                'Content-Type:application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {     
+            $error_msg = curl_error($curl); 
+            echo $error_msg; 
+        } 
+
+        curl_close($curl);
+
+        $result = json_decode($response, true);
+
+        if (isset($result['data']['gateway']['redirect_url'])) {
+
+            $re_url = $result['data']['gateway']['redirect_url'];
+
+            return $re_url;
         }
     }
 }
