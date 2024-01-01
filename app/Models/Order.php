@@ -36,9 +36,11 @@ class Order extends Model
         $map['client_id'] = $orderDetails['clientId'];
         $map['payment_status'] = $orderDetails['paymentStatus'];
         $map['order_status'] = $orderDetails['orderStatus'];
-        
-        if ($orderDetails['bankSlip']) {
+
+        if (array_key_exists('bankSlip', $orderDetails['bankSlip'])) {
             $map['bank_slip'] = $orderDetails['bankSlip'];
+        } else {
+            $map['bank_slip'] = null;
         }
 
         $map['delivery_time_type'] = $orderDetails['deliveryTimeType'];
