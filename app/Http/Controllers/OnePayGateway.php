@@ -355,7 +355,7 @@ class OnePayGateway extends Controller
         "customer_last_name"=> $paymentInfo['lastName'], // spaces are not allowed
         "customer_phone_number" => $paymentInfo['contact'], //must start with +94, spaces are not allowed
         "customer_email" => $paymentInfo['email'], // spaces are not allowed
-        "transaction_redirect_url" => "https://exmple.lk/respones", // spaces are not allowed
+        "transaction_redirect_url" => request()->fullUrl(), // spaces are not allowed
         "additional_data" => "sample" //only support string, spaces are not allowed, this will return in response also
         );
 
