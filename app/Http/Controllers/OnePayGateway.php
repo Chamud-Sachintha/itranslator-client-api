@@ -80,7 +80,7 @@ class OnePayGateway extends Controller
                     $orderDetails['paymentStatus'] = 2; // online gateway payment pending
                     $orderDetails['totalAmount'] = floatval($totalAmount);
 
-                    $order = $this->Order->add_log($orderDetails);
+                    $order = $this->Order->gateway_add_log($orderDetails);
 
                     $paymentLogInfo = array();
                     $paymentLogInfo['clientId'] = $client->id;

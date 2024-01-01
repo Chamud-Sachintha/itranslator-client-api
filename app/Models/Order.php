@@ -37,12 +37,22 @@ class Order extends Model
         $map['payment_status'] = $orderDetails['paymentStatus'];
         $map['order_status'] = $orderDetails['orderStatus'];
 
-        if (array_key_exists('bankSlip', $orderDetails['bankSlip'])) {
-            $map['bank_slip'] = $orderDetails['bankSlip'];
-        } else {
-            $map['bank_slip'] = null;
-        }
+        $map['bank_slip'] = $orderDetails['bankSlip'];
 
+        $map['delivery_time_type'] = $orderDetails['deliveryTimeType'];
+        $map['delivery_method'] = $orderDetails['deliveryMethod'];
+        $map['payment_type'] = $orderDetails['paymentMethod'];
+        $map['total_amount'] = $orderDetails['totalAmount'];
+        $map['create_time'] = $orderDetails['createTime'];
+
+        return $this->create($map);
+    }
+
+    public function gateway_add_log($orderDetails) {
+        $map['invoice_no'] = $orderDetails['invoiceNo'];
+        $map['client_id'] = $orderDetails['clientId'];
+        $map['payment_status'] = $orderDetails['paymentStatus'];
+        $map['order_status'] = $orderDetails['orderStatus'];
         $map['delivery_time_type'] = $orderDetails['deliveryTimeType'];
         $map['delivery_method'] = $orderDetails['deliveryMethod'];
         $map['payment_type'] = $orderDetails['paymentMethod'];
