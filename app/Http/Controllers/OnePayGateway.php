@@ -337,9 +337,13 @@ class OnePayGateway extends Controller
     }
 
     private function onePayGateway($paymentInfo) {
-        $app_id = "HA26118C3C3BC0786F784";
-        $hash_salt = "U0AN118C3C3BC0786F7BF";
-        $app_token = "599dd6ba83f7cef3b1071b1503a036ca2feca6f644e8553934b77d03eb3044740b949e0eed2213b0.MFND118C3C3BC0786F7D8";
+        // $app_id = "HA26118C3C3BC0786F784";
+        // $hash_salt = "U0AN118C3C3BC0786F7BF";
+        // $app_token = "599dd6ba83f7cef3b1071b1503a036ca2feca6f644e8553934b77d03eb3044740b949e0eed2213b0.MFND118C3C3BC0786F7D8";
+
+        $app_id = "2MJ3118E348BC48E57A30";
+        $hash_salt = "V7R4118E348BC48E57A5C";
+        $app_token = "17d74e32519225a59421c269cb1efd8447ccade301dee6b4139530e62c8bf8a11dbd58c003519e24.C0VB118E348BC48E57A72";
 
         $onepay_args = array(
         
