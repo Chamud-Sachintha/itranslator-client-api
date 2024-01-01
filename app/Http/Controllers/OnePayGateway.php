@@ -61,39 +61,41 @@ class OnePayGateway extends Controller
 
                 if ($response == false) {
                     return $this->AppHelper->responseMessageHandle(0, "Payment Not Success.");
-                }
-
-                // print($response);
-
-                $orderDetails = array();
-                $orderDetails['clientId'] = $client->id;
-                $orderDetails['orderStatus'] = 0;
-                $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
-                $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
-                $orderDetails['deliveryTimeType'] = $deliveryTime;
-                $orderDetails['deliveryMethod'] = $deliveryMethod;
-                $orderDetails['paymentMethod'] = $paymentMethod;
-                $orderDetails['totalAmount'] = floatval($totalAmount);
-
-                $order = $this->Order->add_log($orderDetails);
-
-                $orderItemsResp = null;
-
-                if ($order) {
-                    
-                    $jsonArray = json_decode(json_encode($valueObjArray));
-
-                    $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
-                }
-
-                if ($order && $orderItemsResp) {
+                } else {
                     $redirectInfo = array();
                     $redirectInfo['redirect_url'] = $response;
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete Successfully.", $redirectInfo);
-                } else {
-                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }
+
+                // print($response);
+
+                // $orderDetails = array();
+                // $orderDetails['clientId'] = $client->id;
+                // $orderDetails['orderStatus'] = 0;
+                // $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
+                // $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
+                // $orderDetails['deliveryTimeType'] = $deliveryTime;
+                // $orderDetails['deliveryMethod'] = $deliveryMethod;
+                // $orderDetails['paymentMethod'] = $paymentMethod;
+                // $orderDetails['totalAmount'] = floatval($totalAmount);
+
+                // $order = $this->Order->add_log($orderDetails);
+
+                // $orderItemsResp = null;
+
+                // if ($order) {
+                    
+                //     $jsonArray = json_decode(json_encode($valueObjArray));
+
+                //     $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
+                // }
+
+                // if ($order && $orderItemsResp) {
+                    
+                // } else {
+                //     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                // }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
