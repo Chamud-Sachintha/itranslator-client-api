@@ -59,34 +59,41 @@ class OnePayGateway extends Controller
 
                 $response = $this->onePayGateway($paymentInfo);
 
+                if ($response == false) {
+                    return $this->AppHelper->responseMessageHandle(0, "Payment Not Success.");
+                }
+
                 // print($response);
 
-                // $orderDetails = array();
-                // $orderDetails['clientId'] = $client->id;
-                // $orderDetails['orderStatus'] = 0;
-                // $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
-                // $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
-                // $orderDetails['deliveryTimeType'] = $deliveryTime;
-                // $orderDetails['deliveryMethod'] = $deliveryMethod;
-                // $orderDetails['paymentMethod'] = $paymentMethod;
-                // $orderDetails['totalAmount'] = floatval($totalAmount);
+                $orderDetails = array();
+                $orderDetails['clientId'] = $client->id;
+                $orderDetails['orderStatus'] = 0;
+                $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
+                $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
+                $orderDetails['deliveryTimeType'] = $deliveryTime;
+                $orderDetails['deliveryMethod'] = $deliveryMethod;
+                $orderDetails['paymentMethod'] = $paymentMethod;
+                $orderDetails['totalAmount'] = floatval($totalAmount);
 
-                // $order = $this->Order->add_log($orderDetails);
+                $order = $this->Order->add_log($orderDetails);
 
-                // $orderItemsResp = null;
+                $orderItemsResp = null;
 
-                // if ($order) {
+                if ($order) {
                     
-                //     $jsonArray = json_decode(json_encode($valueObjArray));
+                    $jsonArray = json_decode(json_encode($valueObjArray));
 
-                //     $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
-                // }
+                    $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
+                }
 
-                // if ($order && $orderItemsResp) {
-                //     return $this->AppHelper->responseMessageHandle(1, "Operation Complete Successfully.");
-                // } else {
-                //     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
-                // }
+                if ($order && $orderItemsResp) {
+                    $redirectInfo = array();
+                    $redirectInfo['redirect_url'] = $response;
+
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete Successfully.", $redirectInfo);
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
@@ -384,13 +391,13 @@ class OnePayGateway extends Controller
 
         $result = json_decode($response, true);
 
-        echo $result;
-
-        if (isset($result['data']['gateway']['redirect_url'])) {
+        if ($result['data']['gateway']['redirect_url']) {
 
             $re_url = $result['data']['gateway']['redirect_url'];
 
             return $re_url;
+        } else {
+            return false;
         }
     }
 }
