@@ -19,6 +19,7 @@ class CreateOnePayGatewaysTable extends Migration
             $table->string('order_id');
             $table->integer('reference');
             $table->float('amount');
+            $table->integer('status');
             $table->integer('create_time');
             $table->timestamps();
         });

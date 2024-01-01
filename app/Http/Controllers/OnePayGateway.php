@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Models\Client;
+use App\Models\OnePayGateway as ModelsOnePayGateway;
 use App\Models\Order;
 use App\Models\OrderItems;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ class OnePayGateway extends Controller
     private $Client;
     private $Order;
     private $OrderItems;
+    private $OnePayGatewayLog;
 
     public function __construct()
     {
@@ -22,6 +24,7 @@ class OnePayGateway extends Controller
         $this->Order = new Order();
         $this->OrderItems = new OrderItems();
         $this->Client = new Client();
+        $this->OnePayGatewayLog = new ModelsOnePayGateway();
     }
 
     public function placeNewOrderWithGateway(Request $request) {
@@ -63,39 +66,86 @@ class OnePayGateway extends Controller
                     return $this->AppHelper->responseMessageHandle(0, "Payment Not Success.");
                 } else {
                     $redirectInfo = array();
+                    $redirectInfo['reference'] = $paymentInfo['reference'];
                     $redirectInfo['redirect_url'] = $response;
 
-                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete Successfully.", $redirectInfo);
+                    $orderDetails = array();
+                    $orderDetails['clientId'] = $client->id;
+                    $orderDetails['orderStatus'] = 0;
+                    $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
+                    $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
+                    $orderDetails['deliveryTimeType'] = $deliveryTime;
+                    $orderDetails['deliveryMethod'] = $deliveryMethod;
+                    $orderDetails['paymentMethod'] = $paymentMethod;
+                    $orderDetails['paymentStatus'] = 2; // online gateway payment pending
+                    $orderDetails['totalAmount'] = floatval($totalAmount);
+
+                    $order = $this->Order->add_log($orderDetails);
+
+                    $paymentLogInfo = array();
+                    $paymentLogInfo['clientId'] = $client->id;
+                    $paymentLogInfo['orderId'] = $order->id;
+                    $paymentLogInfo['reference'] = $paymentInfo['reference'];
+                    $paymentLogInfo['amount'] = $totalAmount;
+                    $paymentLogInfo['status'] = 0;
+                    $paymentLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                    $addPaymentLog = $this->OnePayGatewayLog->add_log($paymentLogInfo);
+
+                     // $orderItemsResp = null;
+
+                    if ($order && $addPaymentLog) {
+                        $jsonArray = json_decode(json_encode($valueObjArray));
+                        $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
+
+                        if ($orderItemsResp) {
+                            return $this->AppHelper->responseEntityHandle(1, "Operation Complete Successfully.", $redirectInfo);
+                        } else {
+                            return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                        }
+                    }
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
 
-                // print($response);
+    public function addPaymentSuccessLog(Request $request) {
 
-                // $orderDetails = array();
-                // $orderDetails['clientId'] = $client->id;
-                // $orderDetails['orderStatus'] = 0;
-                // $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
-                // $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
-                // $orderDetails['deliveryTimeType'] = $deliveryTime;
-                // $orderDetails['deliveryMethod'] = $deliveryMethod;
-                // $orderDetails['paymentMethod'] = $paymentMethod;
-                // $orderDetails['totalAmount'] = floatval($totalAmount);
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $reference = (is_null($request->reference) || empty($request->reference)) ? "" : $request->reference;
 
-                // $order = $this->Order->add_log($orderDetails);
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($reference == "") {
+            return $this->AppHelper->responseMessageHandle(0, "reference is required.");
+        } else {
 
-                // $orderItemsResp = null;
+            try {
+                $orderRef = $this->OnePayGatewayLog->get_order_by_ref($reference);
 
-                // if ($order) {
-                    
-                //     $jsonArray = json_decode(json_encode($valueObjArray));
+                if ($orderRef) {
+                    $paymentConfirmLog = array();
+                    $paymentConfirmLog['reference']  = $reference;
+                    $paymentConfirmLog['status'] = 1;
 
-                //     $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
-                // }
+                    $orderPayInfo = array();
+                    $orderPayInfo['orderId'] = $orderRef->order_id;
+                    $orderPayInfo['paymentStatus'] = 1;
 
-                // if ($order && $orderItemsResp) {
-                    
-                // } else {
-                //     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
-                // }
+                    $updatePaymentLog = $this->OnePayGatewayLog->update_payment_log($paymentConfirmLog);
+                    $updateOrder = $this->Order->update_order_pay($orderPayInfo);
+
+                    if ($updatePaymentLog && $updateOrder) {
+                        return $this->AppHelper->responseMessageHandle(1, "Operation Successfully");
+                    } else {
+                        return $this->AppHelper->responseMessageHandle(1, "Error Occured.");
+                    }
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

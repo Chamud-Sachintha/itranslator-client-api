@@ -30,6 +30,7 @@ Route::middleware('authToken')->post('get-service-list', [ServiceController::cla
 Route::middleware('authToken')->post('get-service-price-by-delivery-time', [ServiceController::class, 'getPriceByServiceIdAndDeliveryTime']);
 Route::middleware('authToken')->post('place-order-with-bslip', [OrderItemsController::class, 'placeNewOrderWithBankSlip']);
 Route::middleware('authToken')->post('place-new-order-with-gateway', [OnePayGateway::class, 'placeNewOrderWithGateway']);
+Route::middleware('authToken')->post('add-pay-success-log', [OnePayGateway::class, 'addPaymentSuccessLog']);
 Route::middleware('authToken')->post('get-order-requests', [OrderItemsController::class, 'getOrderRequests']);
 Route::middleware('authToken')->post('get-notary-order-list', [NotaryServiceOrderController::class, 'getNotaryServiceOrderRequests']);
 Route::middleware('authToken')->post('get-main-notary-cat-list', [NotaryServiceOrderController::class, 'getMainNotaryCategoryList']);

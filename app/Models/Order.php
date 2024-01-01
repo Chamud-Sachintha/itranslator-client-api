@@ -10,7 +10,7 @@ class Order extends Model
     use HasFactory;
 
     /*
-        'payment_status'                     0- pending 1- paid
+        'payment_status'                     0- pending 1- paid 2 - gateway pending
         'order_status',                      0- pending 1- taken 2- processing 3- complete
         'bank_slip',                         if not it will blank
         'delivery_time_type',                
@@ -62,5 +62,12 @@ class Order extends Model
         $map['invoice_no'] = $invoiceNo;
 
         return $this->where($map)->first();
+    }
+
+    public function update_order_pay($orderPayInfo) {
+        $map['id'] = $orderPayInfo['orderId'];
+        $map1['payment_status'] = $orderPayInfo['paymentStatus'];
+
+        return $this->where($map)->update($map1);
     }
 }

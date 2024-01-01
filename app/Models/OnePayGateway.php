@@ -14,6 +14,7 @@ class OnePayGateway extends Model
         'order_id',
         'reference',
         'amount',
+        'status', // 0 - pending 1- paid
         'create_time'
     ];
 
@@ -22,8 +23,22 @@ class OnePayGateway extends Model
         $map['order_id'] = $paymentInfo['orderId'];
         $map['reference'] = $paymentInfo['reference'];
         $map['amount'] = $paymentInfo['amount'];
+        $map['status'] = $paymentInfo['status'];
         $map['create_time'] = $paymentInfo['createTime'];
 
         return $this->create($map);
+    }
+
+    public function get_order_by_ref($ref) {
+        $map['reference'] = $ref;
+
+        return $this->where($map)->first();
+    }
+
+    public function update_payment_log($paymentInfo) {
+        $map['reference'] = $paymentInfo['reference'];
+        $map1['status'] = 1;
+
+        return $this->where($map)->update($map1);
     }
 }
