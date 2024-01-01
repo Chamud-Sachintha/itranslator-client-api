@@ -384,6 +384,8 @@ class OnePayGateway extends Controller
 
         $result = json_decode($response, true);
 
+        echo $result;
+
         if (isset($result['data']['gateway']['redirect_url'])) {
 
             $re_url = $result['data']['gateway']['redirect_url'];
