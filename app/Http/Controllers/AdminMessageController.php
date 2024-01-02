@@ -93,17 +93,15 @@ class AdminMessageController extends Controller
                 $order = $this->Order->get_order_by_invoice($invoiceNo);
 
                 if ($order) {
-                    $messages = $this->AdminMessage->get_messages_by_order_id($order->id);
+                    $messageList = $this->AdminMessage->get_messages_by_order_id($order->id);
 
                     $dataList = array();
-                    foreach ($messages as $key => $value) {
-                        $sentFrom = $this->AdminUser->find_by_id($value['sent_from']);
-                        $sentTo = $this->Client->get_by_id($value['sent_to']);
+                    foreach ($messageList as $key => $value) {
 
-                        $dataList[$key]['orderId'] = $value['order_id'];
-                        $dataList[$key]['sentFrom'] = $sentFrom['first_name'] . " " . $sentFrom['last_name'];
-                        $dataList[$key]['message'] = $value['message'];
-                        $dataList[$key]['createTime'] = $value['create_time'];
+                        $dataList[$key]['toUser'] = $this->findUser($value->sent_to);
+                        $dataList[$key]['fromUser'] = $this->findUser($value->sent_from);
+                        $dataList[$key]['message'] = $value->message;
+                        $dataList[$key]['time'] = $value->create_time;
                     }
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
@@ -112,5 +110,20 @@ class AdminMessageController extends Controller
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
         }
+    }
+
+    private function findUser($uid) {
+
+        $userName = null;
+        $admin = $this->AdminUser->find_by_id($uid);
+
+        if ($admin) {
+            $userName = $admin->first_name . " " . $admin->last_name;
+        } else {
+            $client = $this->Client->get_by_id($uid);
+            $userName = $client->full_name;
+        }
+
+        return $userName;
     }
 }

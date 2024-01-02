@@ -55,6 +55,17 @@ class AppHelper {
 
         return $result;
     }
+
+    public function decodeImage($imageData) {
+
+        $image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imageData));
+        $imageFileName = 'image_' . time() . Str::random(5) . '.png';
+
+        // Storage::kyc('kyc')->put($imageFileName, $image);
+        file_put_contents(public_path() . '/images' . '/' . $imageFileName, $image);
+
+        return $imageFileName;
+    }
 }
 
 ?>
