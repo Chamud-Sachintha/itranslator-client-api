@@ -19,6 +19,7 @@ class CreateOrdersTable extends Migration
             $table->string('client_id');
             $table->integer('payment_status');
             $table->integer('order_status');
+            $table->integer('is_customer_complete')->default(0);
             $table->string('bank_slip')->nullable();
             $table->integer('delivery_time_type');
             $table->integer('delivery_method');
