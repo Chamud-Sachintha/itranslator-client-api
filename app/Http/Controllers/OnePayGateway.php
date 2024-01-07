@@ -156,215 +156,151 @@ class OnePayGateway extends Controller
                 $orderItemsDetails['serviceId'] = $value->serviceId;
     
                 if ($value->serviceId == 1) {
-                    $frontImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->nicTranslateModel->frontImg));
-                    $frontImagefilename = 'image_' . time() . '.png';
+                    $frontImageFileName = $this->AppHelper->decodeImage($value->nicTranslateModel->frontImg);
+                    $backImageFileName = $this->AppHelper->decodeImage($value->nicTranslateModel->backImg);
     
-                    $backImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->nicTranslateModel->backImg));
-                    $backImagefilename = 'image_' . time() . '.png';
-    
-                    Storage::disk('public')->put($frontImagefilename, $frontImageData);
-                    Storage::disk('public')->put($backImagefilename, $backImageData);
-    
-                    $value->nicTranslateModel->frontImg = $frontImagefilename;
-                    $value->nicTranslateModel->backImg = $backImagefilename;
+                    $value->nicTranslateModel->frontImg = $frontImageFileName;
+                    $value->nicTranslateModel->backImg = $backImageFileName;
     
                     $orderItemsDetails['jsonValue'] = json_encode($value->nicTranslateModel);
                 } else if ($value->serviceId == 2) {
-                    $frontImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->bcTranslateModel->frontImage));
-                    $frontImagefilename = 'image_' . time() . '.png';
+                    $frontImageFileName = $this->AppHelper->decodeImage($value->bcTranslateModel->frontImage);
+                    $backImageFileName = $this->AppHelper->decodeImage($value->bcTranslateModel->backImage);
     
-                    $backImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->bcTranslateModel->backImage));
-                    $backImagefilename = 'image_' . time() . '.png';
-    
-                    Storage::disk('public')->put($frontImagefilename, $frontImageData);
-                    Storage::disk('public')->put($backImagefilename, $backImageData);
-    
-                    $value->bcTranslateModel->frontImage = $frontImagefilename;
-                    $value->bcTranslateModel->backImage = $backImagefilename;
+                    $value->bcTranslateModel->frontImage = $frontImageFileName;
+                    $value->bcTranslateModel->backImage = $backImageFileName;
     
                     $orderItemsDetails['jsonValue'] = json_encode($value->bcTranslateModel);
                 } else if ($value->serviceId == 3) {
-                    $frontImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->mcTranslateModel->frontImg));
-                    $frontImagefilename = 'image_' . time() . '.png';
+                    $frontImageFileName = $this->AppHelper->decodeImage( $value->mcTranslateModel->frontImg);
+                    $backImageFilename = $this->AppHelper->decodeImage($value->mcTranslateModel->backImg);
     
-                    $backImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->mcTranslateModel->backImg));
-                    $backImagefilename = 'image_' . time() . '.png';
-    
-                    Storage::disk('public')->put($frontImagefilename, $frontImageData);
-                    Storage::disk('public')->put($backImagefilename, $backImageData);
-    
-                    $value->mcTranslateModel->frontImg = $frontImagefilename;
-                    $value->mcTranslateModel->backImg = $backImagefilename;
+                    $value->mcTranslateModel->frontImg = $frontImageFileName;
+                    $value->mcTranslateModel->backImg = $backImageFilename;
     
                     $orderItemsDetails['jsonValue'] = json_encode($value->mcTranslateModel);
                 } else if ($value->serviceId == 4) {
-                    $frontImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->dcTranslateModel->frontImg));
-                    $frontImagefilename = 'image_' . time() . '.png';
+                    $frontImageFileName = $this->AppHelper->decodeImage($value->dcTranslateModel->frontImg);
+                    $backImageFileName = $this->AppHelper->decodeImage($value->dcTranslateModel->backImg);
     
-                    $backImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->dcTranslateModel->backImg));
-                    $backImagefilename = 'image_' . time() . '.png';
-    
-                    Storage::disk('public')->put($frontImagefilename, $frontImageData);
-                    Storage::disk('public')->put($backImagefilename, $backImageData);
-    
-                    $value->dcTranslateModel->frontImg = $frontImagefilename;
-                    $value->dcTranslateModel->backImg = $backImagefilename;
+                    $value->dcTranslateModel->frontImg = $frontImageFileName;
+                    $value->dcTranslateModel->backImg = $backImageFileName;
     
                     $orderItemsDetails['jsonValue'] = json_encode($value->dcTranslateModel);
                 } else if ($value->serviceId == 5 || $value->serviceId == 6 || $value->serviceId == 8 || $value->serviceId == 10 || $value->serviceId == 11 || $value->serviceId == 12 || $value->serviceId == 14) {
                     
                     if (property_exists($value->otherDocumentModel, 'page1')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->otherDocumentModel->page1));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
+                        $page1ImageFileName = $this->AppHelper->decodeImage($value->otherDocumentModel->page1);
+                
                         $value->otherDocumentModel->page1 = $page1ImageFileName;
                     }
     
                     if (property_exists($value->otherDocumentModel, 'page2')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->otherDocumentModel->page2));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->otherDocumentModel->page2 = $page1ImageFileName;
+                        $page2ImageFileName = $this->AppHelper->decodeImage($value->otherDocumentModel->page2);
+
+                        $value->otherDocumentModel->page2 = $page2ImageFileName;
                     }
     
                     if (property_exists($value->otherDocumentModel, 'page3')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->otherDocumentModel->page3));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->otherDocumentModel->page3 = $page1ImageFileName;
+                        $page3ImageFileName = $this->AppHelper->decodeImage($value->otherDocumentModel->page3);
+
+                        $value->otherDocumentModel->page3 = $page3ImageFileName;
                     }
     
                     if (property_exists($value->otherDocumentModel, 'page4')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->otherDocumentModel->page4));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->otherDocumentModel->page4 = $page1ImageFileName;
+                        $page4ImageFileName = $this->AppHelper->decodeImage($value->otherDocumentModel->page4);
+
+                        $value->otherDocumentModel->page4 = $page4ImageFileName;
                     }
     
                     if (property_exists($value->otherDocumentModel, 'page5')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->otherDocumentModel->page5));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->otherDocumentModel->page5 = $page1ImageFileName;
+                        $page5ImageFileName = $this->AppHelper->decodeImage($value->otherDocumentModel->page5);
+
+                        $value->otherDocumentModel->page5 = $page5ImageFileName;
                     }
     
                     if (property_exists($value->otherDocumentModel, 'page6')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->otherDocumentModel->page6));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->otherDocumentModel->page6 = $page1ImageFileName;
+                        $page6ImageFileName = $this->AppHelper->decodeImage($value->otherDocumentModel->page6);
+
+                        $value->otherDocumentModel->page6 = $page6ImageFileName;
                     }
     
                     $orderItemsDetails['jsonValue'] = json_encode($value->otherDocumentModel);
                 } else if ($value->serviceId == 7) {
                     if (property_exists($value->affidavitModel, "page1")) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->affidavitModel->page1));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
+                        $page1ImageFileName = $this->AppHelper->decodeImage($value->affidavitModel->page1);
+
                         $value->affidavitModel->page1 = $page1ImageFileName;
                     }
     
                     if (property_exists($value->affidavitModel, "page2")) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->affidavitModel->page2));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->affidavitModel->page2 = $page1ImageFileName;
+                        $page2ImageFileName = $this->AppHelper->decodeImage($value->affidavitModel->page2);
+
+                        $value->affidavitModel->page2 = $page2ImageFileName;
                     }
     
                     if (property_exists($value->affidavitModel, "page3")) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->affidavitModel->page3));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->affidavitModel->page3 = $page1ImageFileName;
+                        $page3ImageFileName = $this->AppHelper->decodeImage($value->affidavitModel->page3);
+
+                        $value->affidavitModel->page3 = $page3ImageFileName;
                     }
     
                     if (property_exists($value->affidavitModel, "page4")) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->affidavitModel->page4));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->affidavitModel->page4 = $page1ImageFileName;
+                        $page4ImageFileName = $this->AppHelper->decodeImage($value->affidavitModel->page4);
+
+                        $value->affidavitModel->page4 = $page4ImageFileName;
                     }
     
                     if (property_exists($value->affidavitModel, "page5")) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->affidavitModel->page5));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->affidavitModel->page5 = $page1ImageFileName;
+                        $page5ImageFileName = $this->AppHelper->decodeImage($value->affidavitModel->page5);
+
+                        $value->affidavitModel->page5 = $page5ImageFileName;
                     }
     
                     $orderItemsDetails['jsonValue'] = json_encode($value->affidavitModel);
                 } else if ($value->serviceId == 9) {
-                    $frontImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->schoolLeavingCertificateNModel->frontImage));
-                    $frontImagefilename = 'image_' . time() . '.png';
+                    $frontImageFileName = $this->AppHelper->decodeImage($value->schoolLeavingCertificateNModel->frontImage);
+                    $backImageFileName = $this->AppHelper->decodeImage($value->schoolLeavingCertificateNModel->backImage);
     
-                    $backImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->schoolLeavingCertificateNModel->backImage));
-                    $backImagefilename = 'image_' . time() . '.png';
-    
-                    Storage::disk('public')->put($frontImagefilename, $frontImageData);
-                    Storage::disk('public')->put($backImagefilename, $backImageData);
-    
-                    $value->schoolLeavingCertificateNModel->frontImage = $frontImagefilename;
-                    $value->schoolLeavingCertificateNModel->backImage = $backImagefilename;
+                    $value->schoolLeavingCertificateNModel->frontImage = $frontImageFileName;
+                    $value->schoolLeavingCertificateNModel->backImage = $backImageFileName;
     
                     $orderItemsDetails['jsonValue'] = json_encode($value->schoolLeavingCertificateNModel);
                 } else if ($value->serviceId == 13 || $value->serviceId == 15) {
                     if (property_exists($value->deedModel, 'page1')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->deedModel->page1));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
+                        $page1ImageFileName = $this->AppHelper->decodeImage($value->deedModel->page1);
+                    
                         $value->deedModel->page1 = $page1ImageFileName;
                     }
 
                     if (property_exists($value->deedModel, 'page2')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->deedModel->page2));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->deedModel->page2 = $page1ImageFileName;
+                        $page2ImageFileName = $this->AppHelper->decodeImage($value->deedModel->page2);
+                    
+                        $value->deedModel->page2 = $page2ImageFileName;
                     }
 
                     if (property_exists($value->deedModel, 'page3')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->deedModel->page3));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->deedModel->page3 = $page1ImageFileName;
+                        $page3ImageFileName = $this->AppHelper->decodeImage($value->deedModel->page3);
+                    
+                        $value->deedModel->page3 = $page3ImageFileName;
                     }
 
                     if (property_exists($value->deedModel, 'page4')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->deedModel->page4));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->deedModel->page4 = $page1ImageFileName;
+                        $page4ImageFileName = $this->AppHelper->decodeImage($value->deedModel->page4);
+                    
+                        $value->deedModel->page4 = $page4ImageFileName;
                     }
 
                     if (property_exists($value->deedModel, 'page5')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->deedModel->page5));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->deedModel->page5 = $page1ImageFileName;
+                        $page5ImageFileName = $this->AppHelper->decodeImage($value->deedModel->page5);
+                    
+                        $value->deedModel->page5 = $page5ImageFileName;
                     }
 
                     if (property_exists($value->deedModel, 'page6')) {
-                        $page1ImageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value->deedModel->page6));
-                        $page1ImageFileName = 'image_' . time() . '.png';
-    
-                        Storage::disk('public')->put($page1ImageFileName, $page1ImageData);
-                        $value->deedModel->page6 = $page1ImageFileName;
+                        $page6ImageFileName = $this->AppHelper->decodeImage($value->deedModel->page6);
+                    
+                        $value->deedModel->page6 = $page6ImageFileName;
                     }
                 }
                 
