@@ -47,6 +47,7 @@ class OrderItemsController extends Controller
         $paymentMethod = (is_null($request->paymentMethod) || empty($request->paymentMethod)) ? "" : $request->paymentMethod;
         $totalAmount = (is_null($request->totalAmount) || empty($request->totalAmount)) ? "" : $request->totalAmount;
         $bankSlip = (is_null($request->bankSlip) || empty($request->bankSlip)) ? "" : $request->bankSlip;
+        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -81,7 +82,8 @@ class OrderItemsController extends Controller
                 }
 
                 $orderDetails['orderStatus'] = 0;
-                $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
+                // $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
+                $orderDetails['invoiceNo'] = $invoiceNo;
                 $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
                 $orderDetails['deliveryTimeType'] = $deliveryTime;
                 $orderDetails['deliveryMethod'] = $deliveryMethod;

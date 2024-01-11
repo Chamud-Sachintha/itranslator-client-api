@@ -36,6 +36,7 @@ class OnePayGateway extends Controller
         $deliveryMethod = (is_null($request->deliveryMethod) || empty($request->deliveryMethod)) ? "" : $request->deliveryMethod;
         $paymentMethod = (is_null($request->paymentMethod) || empty($request->paymentMethod)) ? "" : $request->paymentMethod;
         $totalAmount = (is_null($request->totalAmount) || empty($request->totalAmount)) ? "" : $request->totalAmount;
+        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -72,7 +73,8 @@ class OnePayGateway extends Controller
                     $orderDetails = array();
                     $orderDetails['clientId'] = $client->id;
                     $orderDetails['orderStatus'] = 0;
-                    $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
+                    // $orderDetails['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("TR");
+                    $orderDetails['invoiceNo'] = $invoiceNo;
                     $orderDetails['createTime'] = $this->AppHelper->get_date_and_time();
                     $orderDetails['deliveryTimeType'] = $deliveryTime;
                     $orderDetails['deliveryMethod'] = $deliveryMethod;

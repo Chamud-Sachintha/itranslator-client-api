@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminMessageController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\NotaryServiceOrderController;
 use App\Http\Controllers\OnePayGateway;
 use App\Http\Controllers\OrderItemsController;
@@ -41,3 +42,4 @@ Route::middleware('authToken')->post('get-tr-order-info-by-invoice', [OrderItems
 Route::middleware('authToken')->post('get-doc-list-by-order', [OrderItemsController::class, 'getTranslatedDocsList']);
 Route::middleware('authToken')->post('send-message', [AdminMessageController::class, 'sendMessageToAdmin']);
 Route::middleware('authToken')->post('get-message-list', [AdminMessageController::class, 'getAdminMessageList']);
+Route::middleware('authToken')->post('get-profile-info', [ClientController::class, 'getProfileInfo']);
