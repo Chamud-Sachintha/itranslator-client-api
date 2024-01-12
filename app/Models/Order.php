@@ -73,7 +73,7 @@ class Order extends Model
     public function get_order_requests($uid) {
         $map['client_id'] = $uid;
 
-        return $this->where($map)->whereNotIn('order_status', [3,2])->get();
+        return $this->where($map)->whereNotIn('order_status', [3])->whereNotIn('payment_status', [2])->get();
     }
 
     public function get_order_by_invoice($invoiceNo) {
