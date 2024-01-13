@@ -219,6 +219,19 @@ class OrderItemsController extends Controller
                         }
 
                         $dataList[$key]['createTime'] = $value['create_time'];
+
+                        // if ($value['order_status'] == 0) {
+                        //     $dataList[$key]['orderStatus'] = "Pending";
+                        // } else if ($value['order_status'] == 1) {
+                        //     $dataList[$key]['orderStatus'] = "Taken";
+                        // } else if ($value['order_status'] == 2) {
+                        //     $dataList[$key]['orderStatus'] = "Processing";
+                        // } else if ($value['order_status'] == 3) {
+                        //     $dataList[$key]['orderStatus'] = "Complete";
+                        // } else {
+                        //     $dataList[$key]['orderStatus'] = "N/A";
+                        // }
+
                         $dataList[$key]['assignedTime'] = $orderAssignInfo['create_time'];
                     }
 
@@ -258,6 +271,47 @@ class OrderItemsController extends Controller
                     }
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateOrderStausByClient(Request $request) {
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag =(is_null($request->flag) || empty($request->flag)) ? "" : $request->token;
+        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
+        $orderStatus = (is_null($request->orderStatus) || empty($request->orderStatus)) ? "" : $request->orderStatus;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($invoiceNo == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Invoice No is required.");
+        } else if ($orderStatus == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Payment Status is required.");
+        } else {
+
+            try {
+                $ext = explode("-", $invoiceNo);
+
+                $orderInfo = array();
+                $orderInfo['invoiceNo'] = $invoiceNo;
+                $orderInfo['orderStatus'] = $orderStatus;
+
+                $resp = null;
+                if ($ext[0] == "TR") {
+                    $resp = $this->Order->update_order_status_client($orderInfo);
+                } else if ($ext[0] == "NS") {
+
+                }
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Opertion Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());

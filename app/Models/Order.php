@@ -88,4 +88,11 @@ class Order extends Model
 
         return $this->where($map)->update($map1);
     }
+
+    public function update_order_status_client($orderInfo) {
+        $map['invoice_no'] = $orderInfo['invoiceNo'];
+        $map1['order_status'] = $orderInfo['orderStatus'];
+
+        return $this->where($map)->update($map1);
+    }
 }

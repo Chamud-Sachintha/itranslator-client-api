@@ -66,6 +66,21 @@ class AppHelper {
 
         return $imageFileName;
     }
+
+    public function encodeImage($imageName) {
+        $base64String = null;
+
+        try {
+            $path = public_path('avatar/' . $imageName);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            $base64String = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return $base64String;
+    }
 }
 
 ?>

@@ -100,6 +100,7 @@ class AdminMessageController extends Controller
 
                         $dataList[$key]['toUser'] = $this->findUser($value->sent_to);
                         $dataList[$key]['fromUser'] = $this->findUser($value->sent_from);
+                        $dataList[$key]['avatar'] = $this->findAvatar($value->sent_from);
                         $dataList[$key]['message'] = $value->message;
                         $dataList[$key]['time'] = $value->create_time;
                     }
@@ -110,6 +111,19 @@ class AdminMessageController extends Controller
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
         }
+    }
+
+    private function findAvatar($uid) {
+        $avatar = null;
+        $admin = $this->AdminUser->find_by_id($uid);
+
+        if ($admin) {
+            $avatar = $this->AppHelper->encodeImage('itlogo.png');
+        } else {
+            $avatar = $this->AppHelper->encodeImage('chat_avatar_client.jpg');
+        }
+
+        return $avatar;
     }
 
     private function findUser($uid) {
