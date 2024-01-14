@@ -185,6 +185,7 @@ class OrderItemsController extends Controller
 
                         $dataList[$key]['serviceId'] = $value['service_id'];
                         $dataList[$key]['documentTitle'] = $serviceInfo['service_name'];
+                        $dataList[$key]['valueObj'] = array($jsonDecodedValue);
 
                         if (property_exists($jsonDecodedValue, 'pages')) {
                             $dataList[$key]['pages'] = $jsonDecodedValue->pages;
@@ -313,6 +314,53 @@ class OrderItemsController extends Controller
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getCompleteOrders(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag =(is_null($request->flag) || empty($request->flag)) ? "" : $request->token;
+        $type = (is_null($request->type) || empty($request->type)) ? "" : $request->type;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($type == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Type is required.");
+        } else {
+
+            try {
+                $resp = null;
+
+                $client_info = $this->Client->find_by_token($request_token);
+
+                if ($type == "TR") {
+                    $resp = $this->Order->get_all_complete_by_client($client_info['id']);
+                } else if ($type == "NS") {
+
+                }
+
+                $dataList = array();
+                foreach ($resp as $key => $value) {
+                    $dataList[$key]['invoiceNo'] = $value['invoice_no'];
+                    $dataList[$key]['orderPlacedDate'] = $value['create_time'];
+                    $dataList[$key]['closedDate'] = $this->AppHelper->get_date_and_time();
+                    $dataList[$key]['orderStatus'] = "Completed";
+                    $dataList[$key]['totalAmount'] = $value['total_amount'];
+
+                    if ($value['payment_type'] == 1) {
+                        $dataList[$key]['paymentMethod'] = "Bank Deposit";
+                    } else {
+                        $dataList[$key]['paymentMethod'] = "Online Payment";
+                    }
+                }
+                
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

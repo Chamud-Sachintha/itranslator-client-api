@@ -91,8 +91,15 @@ class Order extends Model
 
     public function update_order_status_client($orderInfo) {
         $map['invoice_no'] = $orderInfo['invoiceNo'];
-        $map1['order_status'] = $orderInfo['orderStatus'];
+        $map1['is_customer_complete'] = $orderInfo['orderStatus'];
 
         return $this->where($map)->update($map1);
+    }
+
+    public function get_all_complete_by_client($clientId) {
+        $map['client_id'] = $clientId;
+        $map['order_status'] = 3;
+
+        return $this->where($map)->get();
     }
 }

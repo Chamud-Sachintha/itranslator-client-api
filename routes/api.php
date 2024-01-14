@@ -44,3 +44,5 @@ Route::middleware('authToken')->post('send-message', [AdminMessageController::cl
 Route::middleware('authToken')->post('get-message-list', [AdminMessageController::class, 'getAdminMessageList']);
 Route::middleware('authToken')->post('get-profile-info', [ClientController::class, 'getProfileInfo']);
 Route::middleware('authToken')->post('update-order-status', [OrderItemsController::class, 'updateOrderStausByClient']);
+
+Route::middleware('authToken')->post('get-complete-orders', [OrderItemsController::class, 'getCompleteOrders']);
