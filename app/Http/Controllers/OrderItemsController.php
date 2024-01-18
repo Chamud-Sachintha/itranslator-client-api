@@ -170,9 +170,9 @@ class OrderItemsController extends Controller
 
                 $orderAssignInfo = $this->OrderAssign->get_by_invoice_id($orderInfo->invoice_no);
 
-                if (empty($orderAssignInfo)) {
-                    return $this->AppHelper->responseMessageHandle(0, "Order is Not Taken by Admin Yet.");
-                }
+                // if (empty($orderAssignInfo)) {
+                //     return $this->AppHelper->responseMessageHandle(0, "Order is Not Taken by Admin Yet.");
+                // }
 
                 if ($orderInfo) {
                     $resp = $this->OrderItems->get_by_orderId($orderInfo->id);
@@ -232,8 +232,12 @@ class OrderItemsController extends Controller
                         // } else {
                         //     $dataList[$key]['orderStatus'] = "N/A";
                         // }
-
-                        $dataList[$key]['assignedTime'] = $orderAssignInfo['create_time'];
+                        
+                        if ($orderAssignInfo) {
+                            $dataList[$key]['assignedTime'] = $orderAssignInfo['create_time'];
+                        } else {
+                            $dataList[$key]['assignedTime'] = "N/A";
+                        }
                     }
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);

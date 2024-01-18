@@ -71,4 +71,10 @@ class NotaryServiceOrder extends Model
 
         return $this->where($map)->get();
     }
+
+    public function get_order_by_invoice($invoiceNo) {
+        $map['invoice_no'] = $invoiceNo;
+
+        return $this->where($map)->first();
+    }
 }

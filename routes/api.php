@@ -7,6 +7,7 @@ use App\Http\Controllers\NotaryServiceOrderController;
 use App\Http\Controllers\OnePayGateway;
 use App\Http\Controllers\OrderItemsController;
 use App\Http\Controllers\ServiceController;
+use App\Models\NotaryServiceOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,3 +47,4 @@ Route::middleware('authToken')->post('get-profile-info', [ClientController::clas
 Route::middleware('authToken')->post('update-order-status', [OrderItemsController::class, 'updateOrderStausByClient']);
 
 Route::middleware('authToken')->post('get-complete-orders', [OrderItemsController::class, 'getCompleteOrders']);
+Route::middleware('authToken')->post('get-notary-order-by-invoice', [NotaryServiceOrderController::class, 'getOrderInfoByInvoice']);
