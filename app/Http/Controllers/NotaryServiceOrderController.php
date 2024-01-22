@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Models\Client;
 use App\Models\MainNotaryServiceCategory;
+use App\Models\NotaryDocuments;
 use App\Models\NotaryServiceOrder;
 use App\Models\SubNotaryServiceCategory;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ class NotaryServiceOrderController extends Controller
     private $MainNotaryServiceCategory;
     private $SubNotaryServiceCategory;
     private $Client;
+    private $NotaryDocuments;
 
     public function __construct()
     {
@@ -24,6 +26,7 @@ class NotaryServiceOrderController extends Controller
         $this->MainNotaryServiceCategory = new MainNotaryServiceCategory();
         $this->SubNotaryServiceCategory = new SubNotaryServiceCategory();
         $this->Client = new Client();
+        $this->NotaryDocuments = new NotaryDocuments();
     }
 
     public function placeNewNotaryServiceOrder(Request $request) {
@@ -184,7 +187,7 @@ class NotaryServiceOrderController extends Controller
                         $dataList[$key]['paymentStatus'] = $value['payment_status'];
                         $dataList[$key]['createTime'] = $value['create_time'];
                         $dataList[$key]['orderStatus'] = $value['order_status'];
-                        $dataList[$key]['totalAmount'] = $value['total_amount'];
+                        $dataList[$key]['totalAmount'] = $value['total_amt'];
                     }
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
@@ -229,6 +232,75 @@ class NotaryServiceOrderController extends Controller
         }
     }
 
+    public function getNotaryDocsList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($invoiceNo == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Invoice No is required.");
+        } else {
+
+            try {
+                $order = $this->NotaryServiceOrder->get_order_by_invoice($invoiceNo);
+
+                if ($order) {
+                    $resp = $this->NotaryDocuments->get_doc_list_by_order_id($order->id);
+
+                    $dataList = array();
+                    foreach ($resp as $key => $value) {
+                        $dataList[$key]['orderId'] = $value['order_id'];
+                        $dataList[$key]['document'] = $value['document'];
+                        $dataList[$key]['createTime'] = $value['create_time'];
+                    }
+
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateOrderStausByClient(Request $request) {
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag =(is_null($request->flag) || empty($request->flag)) ? "" : $request->token;
+        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
+        $orderStatus = (is_null($request->orderStatus) || empty($request->orderStatus)) ? "" : $request->orderStatus;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($invoiceNo == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Invoice No is required.");
+        } else if ($orderStatus == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Payment Status is required.");
+        } else {
+
+            try {
+                $orderInfo = array();
+                $orderInfo['invoiceNo'] = $invoiceNo;
+                $orderInfo['orderStatus'] = $orderStatus;
+
+                $resp = $this->NotaryServiceOrder->update_order_status_client($orderInfo);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Opertion Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function decodeImageData($base64Array) {
 
         $jsonEncodeImageData = array();
@@ -237,7 +309,8 @@ class NotaryServiceOrderController extends Controller
             $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value));
             $imageFileName = 'image_' . time() . $key . '.png';
 
-            $jsonEncodeImageData[$key] = $imageFileName;
+            file_put_contents(public_path() . '/images' . '/' . $imageFileName, $imageData);
+            $jsonEncodeImageData[$key] = $imageFileName;    
         }
 
         return json_encode($jsonEncodeImageData);

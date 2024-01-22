@@ -309,8 +309,6 @@ class OrderItemsController extends Controller
                 $resp = null;
                 if ($ext[0] == "TR") {
                     $resp = $this->Order->update_order_status_client($orderInfo);
-                } else if ($ext[0] == "NS") {
-
                 }
 
                 if ($resp) {

@@ -33,6 +33,7 @@ class NotaryServiceOrder extends Model
         'total_amt',
         'payment_status',
         'order_status',
+        'is_customer_complete',
         'create_time',
         'modified_time'
     ];
@@ -76,5 +77,12 @@ class NotaryServiceOrder extends Model
         $map['invoice_no'] = $invoiceNo;
 
         return $this->where($map)->first();
+    }
+
+    public function update_order_status_client($orderInfo) {
+        $map['invoice_no'] = $orderInfo['invoiceNo'];
+        $map1['is_customer_complete'] = $orderInfo['orderStatus'];
+
+        return $this->where($map)->update($map1);
     }
 }

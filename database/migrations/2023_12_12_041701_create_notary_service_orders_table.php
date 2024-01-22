@@ -38,6 +38,7 @@ class CreateNotaryServiceOrdersTable extends Migration
             $table->float('total_amt');
             $table->string('payment_status');
             $table->string('order_status');
+            $table->integer('is_customer_complete');
             $table->integer('create_time');
             $table->integer('modified_time');
             $table->timestamps();
