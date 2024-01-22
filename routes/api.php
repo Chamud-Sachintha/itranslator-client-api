@@ -50,3 +50,4 @@ Route::middleware('authToken')->post('get-complete-orders', [OrderItemsControlle
 Route::middleware('authToken')->post('get-notary-order-by-invoice', [NotaryServiceOrderController::class, 'getOrderInfoByInvoice']);
 Route::middleware('authToken')->post('get-notary-doc-list', [NotaryServiceOrderController::class, 'getNotaryDocsList']);
 Route::middleware('authToken')->post('update-notary-order-status', [NotaryServiceOrderController::class, 'updateOrderStausByClient']);
+Route::middleware('authToken')->post('submit-bank-slip-ns-order', [NotaryServiceOrderController::class, 'submitBankSlipForOrder']);

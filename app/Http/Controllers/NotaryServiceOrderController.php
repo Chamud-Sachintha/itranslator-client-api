@@ -222,6 +222,16 @@ class NotaryServiceOrderController extends Controller
                     $dataList['secondDocType'] = json_decode($resp->doc_2);
                     $dataList['thirdDocType'] = json_decode($resp->doc_3);
 
+                    $dataList['totalAmount'] = $resp['total_amt'];
+                    $dataList['bankSlip'] = false;
+
+                    if ($resp['bank_slip'] != null) {
+                        $dataList['bankSlip'] = true;
+                    }
+
+                    $dataList['paymentStatus'] = $resp['payment_status'];
+                    $dataList['orderStatus'] = $resp['order_status'];
+
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Invalid Invoice No");
@@ -292,6 +302,41 @@ class NotaryServiceOrderController extends Controller
 
                 if ($resp) {
                     return $this->AppHelper->responseMessageHandle(1, "Opertion Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function submitBankSlipForOrder(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag =(is_null($request->flag) || empty($request->flag)) ? "" : $request->token;
+        $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
+        $bankSlip = (is_null($request->bankSlip) || empty($request->bankSlip)) ? "" : $request->bankSlip;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($invoiceNo == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Invoice No is required.");
+        } else if ($bankSlip == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Bank Slip is required.");
+        } else {
+
+            try {
+                $bankSlipInfo = array();
+                $bankSlipInfo['invoiceNo'] = $invoiceNo;
+                $bankSlipInfo['bankSlip'] = $this->AppHelper->decodeImage($bankSlip);
+
+                $resp = $this->NotaryServiceOrder->submit_bank_slip($bankSlipInfo);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }

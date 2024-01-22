@@ -34,6 +34,8 @@ class NotaryServiceOrder extends Model
         'payment_status',
         'order_status',
         'is_customer_complete',
+        'payment_type',
+        'bank_slip',
         'create_time',
         'modified_time'
     ];
@@ -71,6 +73,13 @@ class NotaryServiceOrder extends Model
         $map['client_id'] = $clientId;
 
         return $this->where($map)->get();
+    }
+
+    public function submit_bank_slip($bankSlipInfo) {
+        $map['invoice_no'] = $bankSlipInfo['invoiceNo'];
+        $map1['bank_slip'] = $bankSlipInfo['bankSlip'];
+
+        return $this->where($map)->update($map1);
     }
 
     public function get_order_by_invoice($invoiceNo) {
