@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminMessageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CSServiceController;
 use App\Http\Controllers\NotaryServiceOrderController;
 use App\Http\Controllers\OnePayGateway;
 use App\Http\Controllers\OrderItemsController;
@@ -51,3 +52,6 @@ Route::middleware('authToken')->post('get-notary-order-by-invoice', [NotaryServi
 Route::middleware('authToken')->post('get-notary-doc-list', [NotaryServiceOrderController::class, 'getNotaryDocsList']);
 Route::middleware('authToken')->post('update-notary-order-status', [NotaryServiceOrderController::class, 'updateOrderStausByClient']);
 Route::middleware('authToken')->post('submit-bank-slip-ns-order', [NotaryServiceOrderController::class, 'submitBankSlipForOrder']);
+
+Route::middleware('authToken')->post('place-cs-order', [CSServiceController::class, 'placeNewCSOrder']);
+Route::middleware('authToken')->post('get-cs-order-requests', [CSServiceController::class, 'getCSServiceOrderRequests']);

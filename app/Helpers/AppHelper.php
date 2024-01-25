@@ -81,6 +81,15 @@ class AppHelper {
 
         return $base64String;
     }
+
+    public function storeImage($fileData, $dir) {
+        $uniqueId = uniqid();
+        $ext = $fileData->getClientOriginalExtension();
+
+        $formated_dir = $dir . "/";
+        $fileData->move(public_path($formated_dir), $uniqueId . '.' . $ext);
+        return ($uniqueId . '.' . $ext);
+    }
 }
 
 ?>
