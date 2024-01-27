@@ -164,7 +164,7 @@ class CSServiceController extends Controller
                         $dataList[$key]['paymentStatus'] = $value['payment_status'];
                         $dataList[$key]['createTime'] = $value['create_time'];
                         $dataList[$key]['orderStatus'] = $value['order_status'];
-                        $dataList[$key]['totalAmount'] = $value['total_amt'];
+                        $dataList[$key]['totalAmount'] = $value['total_amount'];
                     }
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
