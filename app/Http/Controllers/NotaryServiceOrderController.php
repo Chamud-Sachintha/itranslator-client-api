@@ -51,7 +51,10 @@ class NotaryServiceOrderController extends Controller
         $district = (is_null($request->district) || empty($request->district)) ? "" : $request->district;
         $lro = (is_null($request->lro) || empty($request->lro)) ? "" : $request->lro; 
         $notaryServicePersonList = (is_null($request->notaryServicePersonList) || empty($request->notaryServicePersonList)) ? "" : $request->notaryServicePersonList;
+       // dd($notaryServicePersonList);
 
+
+     
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
@@ -64,19 +67,62 @@ class NotaryServiceOrderController extends Controller
 
                 $notaryServiceOrder = array();
 
-                if ($isValidCategory) {
-                    $notaryServiceOrder['clientId'] = $clientInfo->id;
+                if ($request->notaryServicePersonList) {
+                    $natureOfSignatures = []; // Initialize the array to store person data
+
+                    // Loop through each person in the list
+                    foreach ($request->notaryServicePersonList as $person) {
+                        // Check if natureOfSignature exists and is not empty for this person
+                        if (isset($person['natureOfSignature']) && !empty($person['natureOfSignature'])) {
+                            // Add the person's data to the $natureOfSignatures array
+                            $natureOfSignatures[] = [
+                                'name' => isset($person['name']) ? $person['name'] : null,
+                                'address' => isset($person['address']) ? $person['address'] : null,
+                                'adultIdNumber' => isset($person['adultIdNumber']) ? $person['adultIdNumber'] : null,
+                                'bcNumber' => isset($person['bcNumber']) ? $person['bcNumber'] : null,
+                                'drivingLicNo' => isset($person['drivingLicNo']) ? $person['drivingLicNo'] : null,
+                                'email' => isset($person['email']) ? $person['email'] : null,
+                                'mcNumber' => isset($person['mcNumber']) ? $person['mcNumber'] : null,
+                                'nicNumber' => isset($person['nicNumber']) ? $person['nicNumber'] : null,
+                                'passportNo' => isset($person['passportNo']) ? $person['passportNo'] : null,
+                                'personCategory' => isset($person['personCategory']) ? $person['personCategory'] : null,
+                                'phoneNumber' => isset($person['phoneNumber']) ? $person['phoneNumber'] : null,
+                                'natureOfSignature' => $this->decodeImageData(isset($person['natureOfSignature']) ? $person['natureOfSignature'] : null),
+                            ];
+                        }
+                    }
+
+                    // $encf = json_encode($natureOfSignatures);
+                    // return $this->AppHelper->responseMessageHandle(0, $encf);
+                  //  dd($natureOfSignatures);
+                     $notaryServiceOrder['clientId'] = $clientInfo->id;
                     $notaryServiceOrder['invoiceNo'] = $this->AppHelper->generateInvoiceNumber("NS");
                     $notaryServiceOrder['mainCategory'] = $mainCategory;
                     $notaryServiceOrder['subCategory'] = $subCategory;
                     $notaryServiceOrder['descriptionOfService'] = $serviceDescription;
-                    $notaryServiceOrder['firstDoc'] = $this->decodeImageData($firstDoc);
-                    $notaryServiceOrder['secondDoc'] = $this->decodeImageData($secondDoc);
+                    if($firstDoc){
+                        $notaryServiceOrder['firstDoc'] = $this->decodeImageData($firstDoc);
+                    }
+                    else{
+                        $notaryServiceOrder['firstDoc'] = '';
+                    }
+                    if($secondDoc){
+                        $notaryServiceOrder['secondDoc'] = $this->decodeImageData($secondDoc);
+                    }
+                    else{
+                        $notaryServiceOrder['secondDoc'] ='';
+                    }
+                   if($thirdDoc){
                     $notaryServiceOrder['thirdDoc'] = $this->decodeImageData($thirdDoc);
+                   }
+                   else{
+                    $notaryServiceOrder['thirdDoc'] ='';
+                   }
+                   
                     $notaryServiceOrder['dateOfSigning'] = strtotime($dateOfSigning);
                     $notaryServiceOrder['startDate'] = strtotime($startDate);
                     $notaryServiceOrder['endDate'] = strtotime($endDate);
-                    $notaryServiceOrder['value'] = $value;
+                   $notaryServiceOrder['value'] = $value;
                     $notaryServiceOrder['monthlyRent'] = $monthlyRent;
                     $notaryServiceOrder['advanceAmount'] = $advanceAmt;
                     $notaryServiceOrder['von'] = $VODNumber;
@@ -84,12 +130,12 @@ class NotaryServiceOrderController extends Controller
                     $notaryServiceOrder['localGov'] = $lg;
                     $notaryServiceOrder['district'] = $district;
                     $notaryServiceOrder['lro'] = $lro;
-                    $notaryServiceOrder['notaryPersonJson'] = json_encode($notaryServicePersonList);
+                    $notaryServiceOrder['notaryPersonJson'] = json_encode($natureOfSignatures);
                     $notaryServiceOrder['paymentStatus'] = 0;
                     $notaryServiceOrder['orderStatus'] = 0;
                     $notaryServiceOrder['createTime'] = $this->AppHelper->get_date_and_time();
                     $notaryServiceOrder['modifiedTime'] = $this->AppHelper->get_date_and_time();
-
+                   // return $this->AppHelper->responseMessageHandle(0, $notaryServiceOrder);
                     $resp = $this->NotaryServiceOrder->add_log($notaryServiceOrder);
 
                     if ($resp) {
