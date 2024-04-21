@@ -172,7 +172,7 @@ class NotaryServiceOrderController extends Controller
                     $dataList[$key]['id'] = $value['id'];
                     $dataList[$key]['categoryName'] = $value['category_name'];
                 }
-
+// this error fix 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
