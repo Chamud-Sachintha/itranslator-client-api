@@ -70,7 +70,16 @@ class NotaryServiceOrder extends Model
     }
 
     public function get_order_requests($clientId) {
+        $query = $this->where('client_id', $clientId)
+        ->where('order_status', '!=', 3)
+        ->get();
+
+            return $query;
+    }
+
+    public function get_Complete_order_requests($clientId) {
         $map['client_id'] = $clientId;
+        $map['order_status'] = '3';
 
         return $this->where($map)->get();
     }

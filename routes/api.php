@@ -36,6 +36,8 @@ Route::middleware('authToken')->post('place-new-order-with-gateway', [OnePayGate
 Route::middleware('authToken')->post('add-pay-success-log', [OnePayGateway::class, 'addPaymentSuccessLog']);
 Route::middleware('authToken')->post('get-order-requests', [OrderItemsController::class, 'getOrderRequests']);
 Route::middleware('authToken')->post('get-notary-order-list', [NotaryServiceOrderController::class, 'getNotaryServiceOrderRequests']);
+
+Route::middleware('authToken')->post('get-complete-notary-order-list', [NotaryServiceOrderController::class, 'getCompleteNotaryServiceOrderRequests']);
 Route::middleware('authToken')->post('get-main-notary-cat-list', [NotaryServiceOrderController::class, 'getMainNotaryCategoryList']);
 Route::middleware('authToken')->post('get-first-cat-list-by-main-cat-code', [NotaryServiceOrderController::class, 'getFirstSubCategoryByMainCategory']);
 
@@ -55,3 +57,4 @@ Route::middleware('authToken')->post('submit-bank-slip-ns-order', [NotaryService
 
 Route::middleware('authToken')->post('place-cs-order', [CSServiceController::class, 'placeNewCSOrder']);
 Route::middleware('authToken')->post('get-cs-order-requests', [CSServiceController::class, 'getCSServiceOrderRequests']);
+Route::middleware('authToken')->post('get-complete-cs-order-requests', [CSServiceController::class, 'getCompleteCSServiceOrderRequests']);

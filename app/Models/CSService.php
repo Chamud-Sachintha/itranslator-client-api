@@ -34,8 +34,19 @@ class CSService extends Model
     }
 
     public function get_order_requests($clientId) {
-        $map['client'] = $clientId;
+        $query = $this->where('client', $clientId)
+        ->where('is_customer_complete', '!=', 1)
+        ->get();
 
-        return $this->where($map)->get();
+            return $query;
+    }
+
+    public function get_complete_order_requests($clientId) {
+       
+        $query = $this->where('client', $clientId)
+        ->where('is_customer_complete', '=', 1)
+        ->get();
+
+            return $query;
     }
 }

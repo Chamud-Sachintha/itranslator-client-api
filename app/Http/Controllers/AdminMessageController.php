@@ -9,6 +9,7 @@ use App\Models\AdminUser;
 use App\Models\Client;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Models\NotaryServiceOrder;
 
 class AdminMessageController extends Controller
 {
@@ -27,6 +28,7 @@ class AdminMessageController extends Controller
         $this->Client = new Client();
         $this->AdminUser = new AdminUser();
         $this->AdminOrderAssign = new AdminOrderAssign();
+        $this->NotaryServiceOrder = new NotaryServiceOrder();
     }
 
     public function sendMessageToAdmin(Request $request) {
@@ -47,7 +49,15 @@ class AdminMessageController extends Controller
         } else {
 
             try {
-                $order = $this->Order->get_order_by_invoice($invoiceNo);
+                $prefix = substr($invoiceNo, 0, 2);
+                if ($prefix === "NS") {
+                    $order = $this->NotaryServiceOrder->get_order_by_invoice(($invoiceNo));
+                } else if ($prefix === "TR") {
+                    $order = $this->Order->get_order_by_invoice($invoiceNo);
+                }else{
+
+                }
+               
 
                 if ($order) {
                     $adminOrderAssign = $this->AdminOrderAssign->get_by_invoice_id($order->invoice_no);
@@ -90,7 +100,15 @@ class AdminMessageController extends Controller
         } else {
 
             try {
-                $order = $this->Order->get_order_by_invoice($invoiceNo);
+                $prefix = substr($invoiceNo, 0, 2);
+                if ($prefix === "NS") {
+                    $order = $this->NotaryServiceOrder->get_order_by_invoice(($invoiceNo));
+                } else if ($prefix === "TR") {
+                    $order = $this->Order->get_order_by_invoice($invoiceNo);
+                }else{
+
+                }
+               
 
                 if ($order) {
                     $messageList = $this->AdminMessage->get_messages_by_order_id($order->id);
