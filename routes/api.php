@@ -9,6 +9,7 @@ use App\Http\Controllers\OnePayGateway;
 use App\Http\Controllers\OrderItemsController;
 use App\Http\Controllers\ServiceController;
 use App\Models\NotaryServiceOrder;
+use App\Http\Controllers\LegalAdviceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -58,3 +59,8 @@ Route::middleware('authToken')->post('submit-bank-slip-ns-order', [NotaryService
 Route::middleware('authToken')->post('place-cs-order', [CSServiceController::class, 'placeNewCSOrder']);
 Route::middleware('authToken')->post('get-cs-order-requests', [CSServiceController::class, 'getCSServiceOrderRequests']);
 Route::middleware('authToken')->post('get-complete-cs-order-requests', [CSServiceController::class, 'getCompleteCSServiceOrderRequests']);
+
+Route::middleware('authToken')->post('send-Legal-Request', [LegalAdviceController::class, 'sendLegalRequest']);
+Route::middleware('authToken')->post('get-Legal-Request', [LegalAdviceController::class, 'getLegalRequest']);
+Route::middleware('authToken')->post('get-admin-Legal-Message', [LegalAdviceController::class, 'GetAdminLegalmessage']);
+Route::middleware('authToken')->post('send-Legal-Message', [LegalAdviceController::class, 'sendLegalMessage']);

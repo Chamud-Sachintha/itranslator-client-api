@@ -98,7 +98,7 @@ class Order extends Model
 
     public function get_all_complete_by_client($clientId) {
         $map['client_id'] = $clientId;
-        $map['order_status'] = 3;
+        $map['is_customer_complete'] = 1;
 
         return $this->where($map)->get();
     }
