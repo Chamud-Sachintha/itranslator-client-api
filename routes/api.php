@@ -64,3 +64,9 @@ Route::middleware('authToken')->post('send-Legal-Request', [LegalAdviceControlle
 Route::middleware('authToken')->post('get-Legal-Request', [LegalAdviceController::class, 'getLegalRequest']);
 Route::middleware('authToken')->post('get-admin-Legal-Message', [LegalAdviceController::class, 'GetAdminLegalmessage']);
 Route::middleware('authToken')->post('send-Legal-Message', [LegalAdviceController::class, 'sendLegalMessage']);
+
+Route::middleware('authToken')->post('get-lgODoc-List', [LegalAdviceController::class, 'getLegalDocs']);
+Route::middleware('authToken')->post('get-lgDoc-List', [LegalAdviceController::class, 'getLegalFDocs']);
+Route::middleware('authToken')->post('view-lgDoc', [LegalAdviceController::class, 'viewLegalDocs']);
+Route::middleware('authToken')->post('Complete-legal-order', [LegalAdviceController::class, 'completeLegalorder']);
+Route::middleware('authToken')->post('get-Complete-Legal-Request', [LegalAdviceController::class, 'GetCompleteLegalmessage']);

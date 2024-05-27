@@ -36,12 +36,19 @@ class LegalAdviceSerivce extends Model
     }
 
     public function submit_Lmsg_Details($dataList){
+        if (!empty($dataList['filename'])) {
         $map['order_no'] = $dataList['OrderNo'];
         $map['message'] = $dataList['Message'];
         $map['sent_from'] =$dataList['Client_ID']; 
         $map['sent_to'] = $dataList['Adminid'];;
         $map['filename'] = $dataList['filename'];
-        
+        }
+        else{
+            $map['order_no'] = $dataList['OrderNo'];
+            $map['message'] = $dataList['Message'];
+            $map['sent_from'] =$dataList['Client_ID']; 
+            $map['sent_to'] = $dataList['Adminid'];;
+        }
         //DD($dataList);
         return $this->create($map);
     }
@@ -69,5 +76,12 @@ class LegalAdviceSerivce extends Model
         ->get();
 
             return $query;
+    }
+
+    public function Get_Doc_Details($OrderNo){
+
+        $query = $this->where('order_no', $OrderNo)->pluck('filename');
+
+        return $query;
     }
 }
