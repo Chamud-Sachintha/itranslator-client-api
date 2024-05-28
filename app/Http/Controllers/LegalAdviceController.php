@@ -299,10 +299,14 @@ class LegalAdviceController extends Controller
                     if ($resp !== null) {
                         $filteredItems[] = $resp;
                     }
+                    else
+                    {
+                        $filteredItems=[] ;
+                    }
                 }
                
                
-          
+          ///DD( $resp);
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $filteredItems);
                 
             } catch (\Exception $e) {

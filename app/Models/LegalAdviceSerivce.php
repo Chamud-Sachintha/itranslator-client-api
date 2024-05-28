@@ -47,7 +47,8 @@ class LegalAdviceSerivce extends Model
             $map['order_no'] = $dataList['OrderNo'];
             $map['message'] = $dataList['Message'];
             $map['sent_from'] =$dataList['Client_ID']; 
-            $map['sent_to'] = $dataList['Adminid'];;
+            $map['sent_to'] = $dataList['Adminid'];
+            $map['filename'] = "[]";
         }
         //DD($dataList);
         return $this->create($map);
@@ -64,6 +65,7 @@ class LegalAdviceSerivce extends Model
     public function Get_message_Details($OrderNo){
         $query = $this->where('order_no', $OrderNo)
         ->where('order_status', '=', 0)
+        ->orderBy('id')
         ->get();
 
             return $query;

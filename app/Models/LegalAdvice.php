@@ -32,6 +32,7 @@ class LegalAdvice extends Model
             $map['Client_ID'] = $LegalMessage['Client_Id'];
             $map['OrderNo'] =$LegalMessage['OrderNo'];
             $map['Message'] = $LegalMessage['Message'];
+            $map['UploadFiles'] = "[]";
             $map['create_time'] = $LegalMessage['createtime'];
         }
        // DD($LegalMessage);
