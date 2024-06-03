@@ -33,6 +33,15 @@ class CSService extends Model
         return $this->create($map);
     }
 
+    public function update_log($info) {
+        $dataToUpdate['json_value'] = $info['jsonValue'];
+        $conditions['invoice_no'] = $info['invoiceNo'];
+    
+        $updated = $this->where($conditions)->update($dataToUpdate);
+    
+        return $updated; 
+    }
+
     public function get_order_requests($clientId) {
         $query = $this->where('client', $clientId)
         ->where('is_customer_complete', '!=', 1)
@@ -48,5 +57,20 @@ class CSService extends Model
         ->get();
 
             return $query;
+    }
+
+    public function get_order_details($InvoiceNo){
+        $query = $this->where('invoice_no', $InvoiceNo)
+        ->first();
+
+            return $query;
+
+    }
+
+    public function update_order_status_client($orderInfo){
+        $map['invoice_no'] = $orderInfo['invoiceNo'];
+        $map1['is_customer_complete'] = $orderInfo['orderStatus'];
+
+        return $this->where($map)->update($map1);
     }
 }

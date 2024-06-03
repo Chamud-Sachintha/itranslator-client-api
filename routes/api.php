@@ -57,6 +57,10 @@ Route::middleware('authToken')->post('update-notary-order-status', [NotaryServic
 Route::middleware('authToken')->post('submit-bank-slip-ns-order', [NotaryServiceOrderController::class, 'submitBankSlipForOrder']);
 
 Route::middleware('authToken')->post('place-cs-order', [CSServiceController::class, 'placeNewCSOrder']);
+Route::middleware('authToken')->post('place-cs-update', [CSServiceController::class, 'placeUpdateCSOrder']);
+Route::middleware('authToken')->post('get-cs-order-check', [CSServiceController::class, 'getcsordercheck']);
+Route::middleware('authToken')->post('update-cs-order-status', [CSServiceController::class, 'updateOrderStatus']);
+Route::middleware('authToken')->post('get-cs-order-Details', [CSServiceController::class, 'getcsorderDetails']);
 Route::middleware('authToken')->post('get-cs-order-requests', [CSServiceController::class, 'getCSServiceOrderRequests']);
 Route::middleware('authToken')->post('get-complete-cs-order-requests', [CSServiceController::class, 'getCompleteCSServiceOrderRequests']);
 
