@@ -31,6 +31,11 @@ class AuthController extends Controller
             $user = $this->Client->verify_email($emailAddress);
 
             if ($user && Hash::check($password, $user['password'])) {
+
+                if ($user['sms_auth'] == 0) {
+                    return $this->AppHelper->responseMessageHandle(0, "Please Verify Your Account.");
+                }
+
                 $loginInfo['id'] = $user['id'];
                 $loginInfo['fullName'] = $user['full_name'];
                 $loginInfo['email'] = $user['email'];

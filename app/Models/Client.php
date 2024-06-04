@@ -20,7 +20,8 @@ class Client extends Model
         'token',
         'login_time',
         'create_time',
-        'flag'
+        'flag',
+        'sms_auth'
     ];
 
     public function add_log($info) {
@@ -66,5 +67,17 @@ class Client extends Model
     public function get_by_id($uid) {
         $map['id'] = $uid;
         return $this->where($map)->first();
+    }
+
+    public function get_by_mobile($mobile) {
+        $map['mobile_number'] = $mobile;
+
+        return $this->where($map)->first();
+    }
+
+    public function delete_by_id($clientId) {
+        $map['id'] = $clientId;
+
+        return $this->where($map)->delete();
     }
 }

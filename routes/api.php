@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderItemsController;
 use App\Http\Controllers\ServiceController;
 use App\Models\NotaryServiceOrder;
 use App\Http\Controllers\LegalAdviceController;
+use App\Http\Controllers\SMSModelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('signin', [AuthController::class, 'authenticateUser']);
 Route::post('signup', [AuthController::class, 'signUpNewUser']);
+Route::post('send-sms', [SMSModelController::class, 'sendSmsVerificationCode']);
+Route::post('verify-register-code', [SMSModelController::class, 'verifyRegisterCode']);
 Route::middleware('authToken')->post('get-service-list', [ServiceController::class, 'getTranslateServiceList']);
 Route::middleware('authToken')->post('get-service-price-by-delivery-time', [ServiceController::class, 'getPriceByServiceIdAndDeliveryTime']);
 Route::middleware('authToken')->post('place-order-with-bslip', [OrderItemsController::class, 'placeNewOrderWithBankSlip']);
