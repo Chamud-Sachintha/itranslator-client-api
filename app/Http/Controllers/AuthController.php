@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Models\Client;
+use App\Models\SMSModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,11 +12,13 @@ class AuthController extends Controller
 {
     private $AppHelper;
     private $Client;
+    private $SMSModel;
 
     public function __construct()
     {
         $this->AppHelper = new AppHelper();
         $this->Client = new Client();
+        $this->SMSModel = new SMSModel();
     }
 
     public function authenticateUser(Request $request) {
@@ -110,6 +113,33 @@ class AuthController extends Controller
                 }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function changeClientPassword(Request $request) {
+
+        $authCode = (is_null($request->authCode) || empty($request->authCode)) ? "" : $request->authCode;
+        $newPassword = (is_null($request->newPassword) || empty($request->newPassword)) ? "" : $request->newPassword;
+
+        if ($authCode == "" || $newPassword == "") {
+            return $this->AppHelper->responseMessageHandle(0, "All Fields are Required.");
+        } else {
+            $smsLogInfo = $this->SMSModel->get_by_code($authCode);
+
+            if ($smsLogInfo) {
+                $newPasswordInfo['newPassword'] = Hash::make($newPassword);
+                $newPasswordInfo['clientId'] = $smsLogInfo->client_id;
+
+                $resp = $this->Client->update_password($newPasswordInfo);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Successfully.");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } else {
+                return $this->AppHelper->responseMessageHandle(0, "Invalid Client Id");
             }
         }
     }

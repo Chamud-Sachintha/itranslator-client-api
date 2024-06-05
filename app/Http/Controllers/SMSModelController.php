@@ -62,6 +62,59 @@ class SMSModelController extends Controller
         }
     }
 
+    public function sendForgotPasswordVerificationCode(Request $request) {
+        $mobileNumber = (is_null($request->mobileNumber) || empty($request->mobileNumber)) ? "" : $request->mobileNumber;
+        
+        if ($mobileNumber == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Mobile Number is required.");
+        }
+
+        $clientInfo = $this->Client->get_by_mobile($mobileNumber);
+
+        if ($clientInfo) {
+            $authRef = $this->AppHelper->generate_ref(4);
+            $content = "Your Verification Code is " . $authRef . ". Put this code into your verification box and submit within 5 minutes";
+            $smsResponse = $this->sendCode($clientInfo->email, $mobileNumber, $content);
+
+            if ($smsResponse["status"] == "success" && $smsResponse['result'] == "sent") {
+
+                $smsData['clientId'] = $clientInfo->id;
+                $smsData['messageId'] = $smsResponse['msg_id'];
+                $smsData['verifyCode'] = $authRef;
+                $smsData['content'] = $content;
+                $smsData['createTime'] = $this->AppHelper->day_time();
+
+                $smsLog = $this->SMSModel->add_log($smsData);
+
+                if ($smsLog) {
+                    return $this->AppHelper->responseMessageHandle(1, "Message Sent Successfully.");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occued.");
+                }
+            } else {
+                return $this->AppHelper->responseMessageHandle(0, "Error Occued." . $smsResponse['status']);
+            }
+        } else {
+            return $this->AppHelper->responseMessageHandle(0, "Invalid Phone Number.");
+        }
+    }
+
+    public function verifyFrgotVerificationCode(Request $request) {
+        $verify_code = (is_null($request->verifyCode) || empty($request->verifyCode)) ? "" : $request->verifyCode;
+
+        if ($verify_code == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Enter Verify Code");
+        }
+
+        $smsInfo = $this->SMSModel->get_by_code($verify_code);
+
+        if ($smsInfo && ($smsInfo->code == $verify_code)) {
+            return $this->AppHelper->responseMessageHandle(1, "Code Matched.");
+        } else {
+            return $this->AppHelper->responseMessageHandle(0, "Invalid Verify Code");
+        }
+    }
+
     public function verifyRegisterCode(Request $request) {
         $verify_code = (is_null($request->verifyCode) || empty($request->verifyCode)) ? "" : $request->verifyCode;
 
@@ -72,6 +125,7 @@ class SMSModelController extends Controller
         $smsInfo = $this->SMSModel->get_by_code($verify_code);
 
         if ($smsInfo && ($smsInfo->code == $verify_code)) {
+            $this->Client->verify_account();
             return $this->AppHelper->responseMessageHandle(1, "Account Verified Successfully.");
         } else {
             return $this->AppHelper->responseMessageHandle(0, "Invalid Verify Code");
