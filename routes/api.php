@@ -36,6 +36,7 @@ Route::post('verify-register-code', [SMSModelController::class, 'verifyRegisterC
 Route::post('send-forgot-sms-code', [SMSModelController::class, 'sendForgotPasswordVerificationCode']);
 Route::post('verify-forgot-code', [SMSModelController::class, 'verifyFrgotVerificationCode']);
 Route::post('change-pw', [AuthController::class, 'changeClientPassword']);
+Route::middleware('authToken')->post('order-place-notification', [SMSModelController::class, 'sendOrderPlaceSMSNotification']);
 Route::middleware('authToken')->post('get-service-list', [ServiceController::class, 'getTranslateServiceList']);
 Route::middleware('authToken')->post('get-service-price-by-delivery-time', [ServiceController::class, 'getPriceByServiceIdAndDeliveryTime']);
 Route::middleware('authToken')->post('place-order-with-bslip', [OrderItemsController::class, 'placeNewOrderWithBankSlip']);
