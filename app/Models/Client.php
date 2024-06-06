@@ -81,10 +81,10 @@ class Client extends Model
         return $this->where($map)->delete();
     }
 
-    public function verify_account() {
+    public function verify_account($clientId) {
         $map['sms_auth'] = 1;
 
-        return $this->where($map)->update();
+        return $this->where($clientId)->update($map);
     }
 
     public function update_password($newPasswordInfo) {

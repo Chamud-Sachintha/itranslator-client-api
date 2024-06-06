@@ -217,7 +217,7 @@ class SMSModelController extends Controller
         $smsInfo = $this->SMSModel->get_by_code($verify_code);
 
         if ($smsInfo && ($smsInfo->code == $verify_code)) {
-            $this->Client->verify_account();
+            $this->Client->verify_account($smsInfo->client_id);
             return $this->AppHelper->responseMessageHandle(1, "Account Verified Successfully.");
         } else {
             return $this->AppHelper->responseMessageHandle(0, "Invalid Verify Code");
