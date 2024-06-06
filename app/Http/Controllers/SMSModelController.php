@@ -94,27 +94,26 @@ class SMSModelController extends Controller
                 $clientInfo = $this->Client->get_by_id($orderInfo->client_id);
             }
         } else if ($orderType == "NS") {
-            $content = "Thank you for your order! Your order " . $orderNumber . " has been placed successfully. We'll notify you once it's completed.
-                        Track your order here: https://www.dashboard.itranslator.lk/#/app/notary-order-requests
-                        Service - Notary Service";
+            $content = "Thank you for your order! Your order " . $orderNumber . " has been placed successfully. We\'ll notify you once it\'s completed."
+                        . " Service - Notary Service";
             $orderInfo = $this->NotaryServiceOrder->get_order_by_invoice($orderNumber);
 
             if ($orderInfo) {
                 $clientInfo = $this->Client->get_by_id($orderInfo->client_id);
             }
         } else if ($orderType == "CS") {
-            $content = "Thank you for your order! Your order " . $orderNumber . " has been placed successfully. We'll notify you once it's completed.
-                        Track your order here: https://www.dashboard.itranslator.lk/#/app/cs-order-requests
-                        Service - Company Sectrial Service";
+            $content = "Thank you for your order! Your order " . $orderNumber . " has been placed successfully. We\'ll notify you once it\'s completed."
+                        . " Track your order here: https://www.dashboard.itranslator.lk/#/app/cs-order-requests"
+                        . " Service - Company Sectrial Service";
             $orderInfo = $this->CSOrder->get_order_details($orderNumber);
 
             if ($orderInfo) {
                 $clientInfo = $this->Client->get_by_id($orderInfo->client);
             }
         } else if ($orderType == "LG") {
-            $content = "Thank you for your order! Your order " . $orderNumber . " has been placed successfully. We'll notify you once it's completed.
-                        Track your order here: https://www.dashboard.itranslator.lk/#/app/legal-advice-requests
-                        Service - Legal Advice Service";
+            $content = "Thank you for your order! Your order " . $orderNumber . " has been placed successfully. We\'ll notify you once it\'s completed."
+                        . " Track your order here: https://www.dashboard.itranslator.lk/#/app/legal-advice-requests"
+                        . " Service - Legal Advice Service";
             $orderInfo = $this->LegalAdviceOrder->Get_DetailsByOrderId($orderNumber);
 
             if ($orderInfo) {
