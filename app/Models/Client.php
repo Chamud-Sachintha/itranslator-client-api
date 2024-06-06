@@ -82,7 +82,7 @@ class Client extends Model
     }
 
     public function verify_account($clientId) {
-        $map1['client_id'] = $clientId;
+        $map1['id'] = $clientId;
         $map['sms_auth'] = 1;
 
         return $this->where($map1)->update($map);
