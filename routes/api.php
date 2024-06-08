@@ -49,6 +49,8 @@ Route::middleware('authToken')->post('get-complete-notary-order-list', [NotarySe
 Route::middleware('authToken')->post('get-main-notary-cat-list', [NotaryServiceOrderController::class, 'getMainNotaryCategoryList']);
 Route::middleware('authToken')->post('get-first-cat-list-by-main-cat-code', [NotaryServiceOrderController::class, 'getFirstSubCategoryByMainCategory']);
 
+Route::post('/verifyOnePayPayment ', [OnePayGateway::class, 'verifyOnePayPayment']);
+
 Route::middleware('authToken')->post('place-notary-service-order', [NotaryServiceOrderController::class, 'placeNewNotaryServiceOrder']);
 Route::middleware('authToken')->post('get-tr-order-info-by-invoice', [OrderItemsController::class, 'getTranslateOrderInfoByInvoice']);
 Route::middleware('authToken')->post('get-doc-list-by-order', [OrderItemsController::class, 'getTranslatedDocsList']);
