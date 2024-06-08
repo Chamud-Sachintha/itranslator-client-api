@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\OrderItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class OnePayGateway extends Controller
 {
@@ -53,22 +54,26 @@ class OnePayGateway extends Controller
             try {
                 $client = $this->Client->find_by_token($request_token);
 
+                $nameExt = explode(" ", $client->full_name);
+
                 $paymentInfo = array();
                 $paymentInfo['amount'] = $totalAmount;
                 $paymentInfo['reference'] = $this->AppHelper->generate_ref(10);
-                $paymentInfo['firstName'] = $client->full_name;
+                $paymentInfo['firstName'] = $nameExt[0];
                 $paymentInfo['lastName'] = "Test";
                 $paymentInfo['contact'] = $client->mobile_number;
                 $paymentInfo['email'] = $client->email;
 
                 $response = $this->onePayGateway($paymentInfo);
 
-                if ($response == false) {
+                $paymentInfo['reference'] = $response["ipg_transaction_id"];
+
+                if ($response == null) {
                     return $this->AppHelper->responseMessageHandle(0, "Payment Not Success.");
                 } else {
                     $redirectInfo = array();
                     $redirectInfo['reference'] = $paymentInfo['reference'];
-                    $redirectInfo['redirect_url'] = $response;
+                    $redirectInfo['redirect_url'] = $response["gateway"]["redirect_url"];
 
                     $orderDetails = array();
                     $orderDetails['clientId'] = $client->id;
@@ -337,7 +342,7 @@ class OnePayGateway extends Controller
         "customer_last_name"=> $paymentInfo['lastName'], // spaces are not allowed
         "customer_phone_number" => $paymentInfo['contact'], //must start with +94, spaces are not allowed
         "customer_email" => $paymentInfo['email'], // spaces are not allowed
-        "transaction_redirect_url" => "https://dashboard.itranslate.lk/#/app/select-services?payment_success=true", // spaces are not allowed
+        "transaction_redirect_url" => "https://dashboard.itranslate.lk", // spaces are not allowed
         "additional_data" => "sample" //only support string, spaces are not allowed, this will return in response also
         );
 
@@ -379,13 +384,48 @@ class OnePayGateway extends Controller
 
         $result = json_decode($response, true);
 
-        if ($result['data']['gateway']['redirect_url']) {
+        if ($result['message'] == "success") {
 
             $re_url = $result['data']['gateway']['redirect_url'];
 
-            return $re_url;
+            return $result['data'];
         } else {
-            return false;
+            $result['data'] = null;
+            return $result;
+        }
+    }
+
+    public function verifyOnePayPayment(Request $request) {
+
+        Log::info('OnePay Callback:', $request->all());
+
+        if ($request->status_message == "SUCCESS" && $request->status == 1) {
+            try {
+                $orderRef = $this->OnePayGatewayLog->get_order_by_ref($request->transaction_id);
+
+                if ($orderRef) {
+                    $paymentConfirmLog = array();
+                    $paymentConfirmLog['reference']  = $request->transaction_id;
+                    $paymentConfirmLog['status'] = 1;
+
+                    $orderPayInfo = array();
+                    $orderPayInfo['orderId'] = $orderRef->order_id;
+                    $orderPayInfo['paymentStatus'] = 1;
+
+                    $updatePaymentLog = $this->OnePayGatewayLog->update_payment_log($paymentConfirmLog);
+                    $updateOrder = $this->Order->update_order_pay($orderPayInfo);
+
+                    if ($updatePaymentLog && $updateOrder) {
+                        return $this->AppHelper->responseMessageHandle(1, "Operation Successfully");
+                    } else {
+                        return $this->AppHelper->responseMessageHandle(1, "Error Occured.");
+                    }
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }   
+        } else {
+            return $this->AppHelper->responseMessageHandle(1, $request->status_message);
         }
     }
 }
