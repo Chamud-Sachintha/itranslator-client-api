@@ -41,7 +41,7 @@ class LegalAdvice extends Model
 
     public function Get_Details($id){
         $query = $this->where('Client_ID', $id)
-        ->where('Status', '=', 1)
+        ->where('Status', '!=', 2)
         ->get();
 
             return $query;
