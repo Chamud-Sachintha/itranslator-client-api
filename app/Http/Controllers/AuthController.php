@@ -33,6 +33,10 @@ class AuthController extends Controller
         } else {
             $user = $this->Client->verify_email($emailAddress);
 
+            if ($user == null) {
+                $user = $this->Client->get_by_mobile($emailAddress);
+            }
+
             if ($user && Hash::check($password, $user['password'])) {
 
                 if ($user['sms_auth'] == 0) {
@@ -89,9 +93,14 @@ class AuthController extends Controller
             try {
 
                 $checkEmail = $this->Client->verify_email($emailAddress);
+                $checkMobile = $this->Client->get_by_mobile($mobileNumber);
 
                 if (!empty($checkEmail)) {
                     return $this->AppHelper->responseMessageHandle(0, "Email Already Exist.");
+                }
+
+                if (!empty($checkMobile)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Mobile Already Exist.");
                 }
 
                 $clientInfo = array();
