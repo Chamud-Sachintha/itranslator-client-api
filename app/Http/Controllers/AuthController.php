@@ -7,6 +7,8 @@ use App\Models\Client;
 use App\Models\SMSModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailService;
 
 class AuthController extends Controller
 {
@@ -114,8 +116,18 @@ class AuthController extends Controller
                 $clientInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
                 $client = $this->Client->add_log($clientInfo);
-
+                   // dd( $client);
                 if ($client) {
+                    $details = [
+                        'full_name' => $client->full_name ,
+                        'created_at' => $client->created_at ,
+                        'bodyType' => '1' 
+                        
+                    ];
+            
+                    Mail::to('hashanmirinda10@gmail.com')->send(new MailService($details));
+            
+                  
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $client);
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured");
