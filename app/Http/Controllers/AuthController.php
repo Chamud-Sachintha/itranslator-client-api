@@ -125,7 +125,7 @@ class AuthController extends Controller
                         
                     ];
             
-                    Mail::to('hashanmirinda10@gmail.com')->send(new MailService($details));
+                    Mail::to($emailAddress)->send(new MailService($details));
             
                   
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $client);

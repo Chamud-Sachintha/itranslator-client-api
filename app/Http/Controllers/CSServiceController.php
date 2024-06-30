@@ -7,6 +7,8 @@ use App\Models\Client;
 use App\Models\CSService;
 use App\Models\CsPaymentModel;
 use Illuminate\Http\Request;
+use App\Mail\MailService;
+use Illuminate\Support\Facades\Mail;
 
 class CSServiceController extends Controller
 {
@@ -135,6 +137,17 @@ class CSServiceController extends Controller
                 $resp = $this->CSService->add_log($csServiceOrderInfo);
 
                 if ($resp) {
+                   
+                        $details = [
+                            'OrderNo' => $resp->invoice_no ,
+                            'full_name' => $client->full_name ,
+                            'TypeOfOrder' => 'Company Sectratial Service' ,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'bodyType' => '3' 
+                            
+                        ];
+                
+                        Mail::to($client['email'])->send(new MailService($details));
                     return $this->AppHelper->responseMessageHandle(1, "Opertion omplete");
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");

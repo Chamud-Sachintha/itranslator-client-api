@@ -10,6 +10,7 @@ use App\Models\Client;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\NotaryServiceOrder;
+use Illuminate\Support\Facades\Mail;
 
 class AdminMessageController extends Controller
 {
@@ -158,4 +159,6 @@ class AdminMessageController extends Controller
 
         return $userName;
     }
+
+    
 }
