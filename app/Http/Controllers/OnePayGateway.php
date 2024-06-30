@@ -10,6 +10,8 @@ use App\Models\OrderItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailService;
 
 class OnePayGateway extends Controller
 {
@@ -99,13 +101,44 @@ class OnePayGateway extends Controller
 
                     $addPaymentLog = $this->OnePayGatewayLog->add_log($paymentLogInfo);
 
-                     // $orderItemsResp = null;
+                    
 
                     if ($order && $addPaymentLog) {
                         $jsonArray = json_decode(json_encode($valueObjArray));
                         $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
 
+                        if($deliveryMethod == 2){
+                            $Dmethord = "By Hand";
+                        }elseif($deliveryMethod == 3){
+                            $Dmethord =  'By Courier';
+                        }elseif($deliveryMethod == 4)
+                        {
+                            $Dmethord =  'By Speed Post';
+
+                        }
+                        else{
+
+                        }
+
+                        if($paymentMethod == 2){
+                            $Pmethord = "Cash Deposit";
+                        }
+                        else{
+                            $Pmethord = "Online Payment";
+                        }
+
                         if ($orderItemsResp) {
+                            $details = [
+                                'OrderNo' => $invoiceNo ,
+                                'ProductName' => 'Online Document Translation' ,
+                                'TotalAmount' => floatval($totalAmount) ,
+                                'DeliveryMethord' => $Dmethord,
+                                'PaymentMethord' => $Pmethord ,
+                                'bodyType' => '1' 
+                                
+                            ];
+                    
+                            Mail::to($client->email)->send(new MailService($details));
                             return $this->AppHelper->responseEntityHandle(1, "Operation Complete Successfully.", $redirectInfo);
                         } else {
                             return $this->AppHelper->responseMessageHandle(0, "Error Occured.");

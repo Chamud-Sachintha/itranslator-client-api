@@ -12,6 +12,9 @@ use App\Models\Order;
 use App\Models\LegalAdvice;
 use App\Models\LegalAdviceSerivce;
 use App\Models\NotaryServiceOrder;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailService;
+
 
 class LegalAdviceController extends Controller
 {
@@ -129,6 +132,16 @@ class LegalAdviceController extends Controller
                 $resp = $this->LegalAdvice->submit_Details($LegalMessage);
 
                 if ($resp) {
+                    $details = [
+                        'OrderNo' => $resp->OrderNo ,
+                        'TypeOfOrder' => 'Legal Advice' ,
+                        'CreateDate' => date('Y-m-d H:i:s'),
+                        'Message' => $client->Message ,
+                        'bodyType' => '3' 
+                        
+                    ];
+            
+                    Mail::to($client['email'])->send(new MailService($details));
                     return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occurred.");

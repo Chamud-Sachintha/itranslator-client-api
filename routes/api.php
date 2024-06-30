@@ -87,3 +87,4 @@ Route::middleware('authToken')->post('get-Complete-Legal-Request', [LegalAdviceC
 
 // print option
 Route::middleware('authToken')->post('export-as-pdf', [ExportInvoiceController::class, 'exportInvoiceAsPDF']);
+Route::middleware('authToken')->post('send-custom-email', [AdminMessageController::class, 'sendCustomEmail']);
