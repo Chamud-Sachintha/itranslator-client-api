@@ -199,29 +199,29 @@
         </div>
         <div class="content">
             <h1>Order Confirmation</h1>
-            <p>Order Number: <strong>$details['OrderNo'] </strong></p>
+            <p>Order Number: <strong>{{$details['OrderNo']}} </strong></p>
             <p>Thank you for your order. Below are the details of your purchase:</p>
             
             <table class="order-details">
             
                 <tr>
                 <th>Product Name</th>
-                    <td>$details['ProductName'] </td>
+                    <td>{{$details['ProductName'] }}</td>
                    
                 </tr>
                 <tr>
                     <td>Delivery Method</td>
-                    <td>$details['DeliveryMethord'] </td>
+                    <td>{{$details['DeliveryMethord']}} </td>
                 </tr>
                 <tr>
                     <td>Total Amount</td>
-                    <td>$details['TotalAmount'] </td>
+                    <td>{{$details['TotalAmount']}} </td>
                 </tr>
             </table>
 
             <div class="order-summary">
                 <p><strong>Payment Details</strong></p>
-                <p>Payment Method: $details['PaymentMethord'] </p>
+                <p>Payment Method:{{ $details['PaymentMethord']}} </p>
                 <p>Payment Status: Pending </p>
             </div>
             
