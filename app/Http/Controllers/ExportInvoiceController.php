@@ -37,6 +37,7 @@ class ExportInvoiceController extends Controller
         $deliveryTimeType = (is_null($request->deliveryTimeType) || empty($request->deliveryTimeType)) ? "" : $request->deliveryTimeType;
         $paymentMethod = (is_null($request->paymentMethod) || empty($request->paymentMethod)) ? "" : $request->paymentMethod;
         $valueObjArray = (is_null($request->valueObjModel) || empty($request->valueObjModel)) ? "" : $request->valueObjModel;
+        $totalAmount = (is_null($request->totalAmount) || empty($request->totalAmount)) ? "" : $request->totalAmount;
 
         // client info 
 
@@ -70,7 +71,8 @@ class ExportInvoiceController extends Controller
             "address" => $address,
             "mobileNumber" => $mobileNumber,
             "deliveryType" => $deliveryType,
-            "documentObjectArray" => $valueObjArray
+            "documentObjectArray" => $valueObjArray,
+            "totalAmount" => $totalAmount
         ];
 
         $fileName = "waybill";
