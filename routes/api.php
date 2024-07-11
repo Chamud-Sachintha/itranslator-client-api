@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminMessageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CSServiceController;
+use App\Http\Controllers\ExportInvoiceController;
 use App\Http\Controllers\NotaryServiceOrderController;
 use App\Http\Controllers\OnePayGateway;
 use App\Http\Controllers\OrderItemsController;
@@ -83,3 +84,7 @@ Route::middleware('authToken')->post('get-lgDoc-List', [LegalAdviceController::c
 Route::middleware('authToken')->post('view-lgDoc', [LegalAdviceController::class, 'viewLegalDocs']);
 Route::middleware('authToken')->post('Complete-legal-order', [LegalAdviceController::class, 'completeLegalorder']);
 Route::middleware('authToken')->post('get-Complete-Legal-Request', [LegalAdviceController::class, 'GetCompleteLegalmessage']);
+
+// print option
+Route::middleware('authToken')->post('export-as-pdf', [ExportInvoiceController::class, 'exportInvoiceAsPDF']);
+Route::middleware('authToken')->post('send-custom-email', [AdminMessageController::class, 'sendCustomEmail']);

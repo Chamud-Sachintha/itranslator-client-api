@@ -9,6 +9,8 @@ use App\Models\NotaryDocuments;
 use App\Models\NotaryServiceOrder;
 use App\Models\SubNotaryServiceCategory;
 use Illuminate\Http\Request;
+use App\Mail\MailService;
+use Illuminate\Support\Facades\Mail;
 
 class NotaryServiceOrderController extends Controller
 {
@@ -139,6 +141,16 @@ class NotaryServiceOrderController extends Controller
                     $resp = $this->NotaryServiceOrder->add_log($notaryServiceOrder);
 
                     if ($resp) {
+                        $details = [
+                            'OrderNo' => $resp->invoice_no ,
+                            'full_name' => $clientInfo->full_name ,
+                            'TypeOfOrder' => 'Nortary Service' ,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'bodyType' => '3' 
+                            
+                        ];
+                
+                        Mail::to($clientInfo->email )->send(new MailService($details));
                         return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Error Occured.");

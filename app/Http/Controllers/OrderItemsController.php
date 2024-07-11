@@ -13,6 +13,8 @@ use App\Models\TranslatedDocuments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailService;
 
 class OrderItemsController extends Controller
 {
@@ -97,11 +99,36 @@ class OrderItemsController extends Controller
                 if ($order) {
                     
                     $jsonArray = json_decode(json_encode($valueObjArray));
-
                     $orderItemsResp = $this->createOrderItemsArray($order, $jsonArray);
                 }
 
                 if ($order && $orderItemsResp) {
+
+                    if($deliveryMethod == 2){
+                        $Dmethord = "By Hand";
+                    }elseif($deliveryMethod == 3){
+                        $Dmethord =  'By Courier';
+                    }elseif($deliveryMethod == 4)
+                    {
+                        $Dmethord =  'By Speed Post';
+
+                    }
+                    else{
+
+                    }
+
+                    $details = [
+                        'OrderNo' => $invoiceNo ,
+                        'ProductName' => 'Online Document Translation' ,
+                        'TotalAmount' => floatval($totalAmount) ,
+                        'DeliveryMethord' => $Dmethord,
+                        'PaymentMethord' => 'Bank Deposit' ,
+                        'bodyType' => '1' 
+                        
+                    ];
+            
+                    Mail::to($client->email)->send(new MailService($details));
+
                     return $this->AppHelper->responseMessageHandle(1, "Operation Complete Successfully.");
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
