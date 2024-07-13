@@ -38,6 +38,18 @@ class Client extends Model
         return $this->create($map);
     }
 
+    public function update_log($id, $info) {
+        $map['full_name'] = $info['fullName'];
+        $map['email'] = $info['emailAddress'];
+        $map['nic_number'] = $info['nicNumber'];
+        $map['address'] = $info['address'];
+        $map['mobile_number'] = $info['mobileNumber'];
+        $map['bdate'] = $info['birthDate'];
+       // $map['updated_at'] = $info['updated_at'];
+
+        return $this->where('id', $id)->update($map);
+    }
+
     public function check_permission($token, $flag) {
         $map['flag'] = $flag;
         $map['token'] = $token;

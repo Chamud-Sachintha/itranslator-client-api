@@ -102,4 +102,9 @@ class Order extends Model
 
         return $this->where($map)->get();
     }
+
+    public function find_by_count($clientID){
+        $query = $this->where('client_id', $clientID) ->count();
+        return $query;
+    }
 }

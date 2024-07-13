@@ -82,4 +82,10 @@ class LegalAdvice extends Model
         $map1['Status'] = 2;
         return $this->where($map)->update($map1);
     }
+
+    public function find_by_count($clientID){
+        $query = $this->where('Client_ID', $clientID)
+        ->count();
+        return $query;
+    }
 }

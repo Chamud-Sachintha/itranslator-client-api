@@ -164,4 +164,74 @@ class AuthController extends Controller
             }
         }
     }
+
+    public function getprofiledetails(Request $request){
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Full Name is required.");
+        }
+        else{
+            $client = $this->Client->find_by_token($request->token);
+           
+            if ($client) {
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $client);
+            } else {
+                return $this->AppHelper->responseMessageHandle(0, "Error Occured");
+            }
+        }
+
+    }
+
+    public function updateprofile(Request $request){
+        $request_token = (is_null($request->token) || empty($request->token))? "" : $request->token;
+        $fullname = (is_null($request->UserName) || empty($request->UserName)) ? "" : $request->UserName;
+        $emailAddress = (is_null($request->Email) || empty($request->Email)) ? "" : $request->Email;
+        $nicNumber = (is_null($request->NIC) || empty($request->NIC)) ? "" : $request->NIC;
+        $address = (is_null($request->Address) || empty($request->Address)) ? "" : $request->Address;
+        $mobileNumber = (is_null($request->Phone) || empty($request->Phone)) ? "" : $request->Phone;
+        $birthDate = (is_null($request->Birthday) || empty($request->Birthday)) ? "" : $request->Birthday;
+       
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Full Name is required.");
+        }
+        else{
+
+            $client = $this->Client->find_by_token($request->token);
+                
+            $clientInfo = array();
+          
+            $clientInfo['fullName'] = $fullname;
+            $clientInfo['emailAddress'] = $emailAddress;
+            $clientInfo['nicNumber'] = $nicNumber;
+            $clientInfo['address'] = $address;
+            $clientInfo['mobileNumber'] = $mobileNumber;
+            $clientInfo['birthDate'] = strtotime($birthDate);
+           // $clientInfo['updated_at'] = $this->AppHelper->get_date_and_time();
+            
+            $client = $this->Client->update_log( $client->id, $clientInfo);
+            if ($client) {
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $client );
+                } 
+                else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured");
+                    }
+        }
+    }
+
+    public function resetPasswordprofile(Request $request){
+        $request_token = (is_null($request->token) || empty($request->token))? "" : $request->token;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Full Name is required.");
+        }
+        else{
+
+            $changedpass = Hash::make($request->newpass);
+            $client = $this->Client->find_by_token($request->token);
+            $newPasswordInfo['newPassword'] = $changedpass ;
+            $newPasswordInfo['clientId'] = $client->id;
+            $client = $this->Client->update_password( $newPasswordInfo);
+
+        }
+    }
 }

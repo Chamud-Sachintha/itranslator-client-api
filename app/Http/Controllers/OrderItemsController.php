@@ -9,6 +9,8 @@ use App\Models\NotaryServiceOrder;
 use App\Models\Order;
 use App\Models\OrderItems;
 use App\Models\Service;
+use App\Models\CSService;
+use App\Models\LegalAdvice;
 use App\Models\TranslatedDocuments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -21,6 +23,8 @@ class OrderItemsController extends Controller
     private $AppHelper;
     private $Client;
     private $Order;
+    private $LegalAdvice;
+    private $CSService;
     private $OrderItems;
     private $NotaryServiceOrder;
     private $Service;
@@ -37,6 +41,8 @@ class OrderItemsController extends Controller
         $this->Service = new Service();
         $this->OrderAssign = new AdminOrderAssign();
         $this->TranslateDocument = new TranslatedDocuments();
+        $this->LegalAdvice = new LegalAdvice();
+        $this->CSService = new CSService();
     }
 
     public function placeNewOrderWithBankSlip(Request $request) {
@@ -564,5 +570,34 @@ class OrderItemsController extends Controller
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+
+    public function getorderedetails(Request $request){
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Full Name is required.");
+        }
+        else{
+            $client = $this->Client->find_by_token($request->token);
+            
+
+            $TransCount = $this->Order->find_by_count($client->id) ?? 0;
+            $NotaryCount = $this->NotaryServiceOrder->find_by_count($client->id) ?? 0;
+            $LegalCount = $this->LegalAdvice->find_by_count($client->id) ?? 0;
+            $CSCount = $this->CSService->find_by_count($client->id) ?? 0;
+
+            $data = [
+               
+                'TransCount' => $TransCount,
+                'NotaryCount' => $NotaryCount,
+                'LegalCount' => $LegalCount,
+                'CSCount' => $CSCount
+            ];
+          
+            return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $data);
+
+        }
+
     }
 }
