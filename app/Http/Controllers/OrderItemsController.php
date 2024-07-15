@@ -57,8 +57,8 @@ class OrderItemsController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
         } else if ($valueObjArray == "") {
             return $this->AppHelper->responseMessageHandle(0, "Service values are required.");
-        } else if ($bankSlip == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Bank Slip is required.");
+        // } else if ($bankSlip == "") {
+        //     return $this->AppHelper->responseMessageHandle(0, "Bank Slip is required.");
         } else {
 
             try {
