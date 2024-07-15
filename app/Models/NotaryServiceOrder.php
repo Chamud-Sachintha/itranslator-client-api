@@ -103,4 +103,10 @@ class NotaryServiceOrder extends Model
 
         return $this->where($map)->update($map1);
     }
+
+    public function find_by_count($clientID){
+        $query = $this->where('client_id', $clientID)
+        ->count();
+        return $query;
+    }
 }

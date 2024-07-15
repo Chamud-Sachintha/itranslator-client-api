@@ -88,3 +88,9 @@ Route::middleware('authToken')->post('get-Complete-Legal-Request', [LegalAdviceC
 // print option
 Route::middleware('authToken')->post('export-as-pdf', [ExportInvoiceController::class, 'exportInvoiceAsPDF']);
 Route::middleware('authToken')->post('send-custom-email', [AdminMessageController::class, 'sendCustomEmail']);
+
+
+Route::middleware('authToken')->post('get-profile-details', [AuthController::class, 'getprofiledetails']);
+Route::middleware('authToken')->post('update-profile', [AuthController::class, 'updateprofile']);
+Route::middleware('authToken')->post('prfile-resetPassword', [AuthController::class, 'resetPasswordprofile']);
+Route::middleware('authToken')->post('get-orders-details', [OrderItemsController::class, 'getorderedetails']);
