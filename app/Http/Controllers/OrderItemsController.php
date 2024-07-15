@@ -68,15 +68,14 @@ class OrderItemsController extends Controller
         } else {
 
             try {
-
                 $client = $this->Client->find_by_token($request_token);
 
                 $orderDetails = array();
                 $orderDetails['clientId'] = $client->id;
 
+                $orderDetails['paymentStatus'] = 0;
+                $orderDetails['bankSlip'] = null;
                 if ($bankSlip != null) {
-                    $orderDetails['paymentStatus'] = 0;
-
                     // $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $bankSlip));
                     // $filename = 'image_' . time() . Str::random(5) . '.png';
 
