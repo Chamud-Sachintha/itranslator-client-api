@@ -85,6 +85,11 @@
             font-size: 14px;
             color: #666;
         }
+
+        .invoice-compinfo {
+            text-align: center;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -136,6 +141,13 @@
         </div>
         <div class="invoice-footer">
             <p>Thank you for your order!</p>
+        </div>
+        <div class="invoice-compinfo">
+            <p>No.71/D , 1St Floor , High Level Plaza , Delkanda ,Nugegoda,</p>
+            <p>Sri Lanka</p>
+            <link rel="stylesheet" href="tel://11 282 6212/">+94 11 282 6212
+            <link rel="stylesheet" href="tel://71 362 3018/">+94 71 362 3018
+            <link rel="stylesheet" href="tel://71 717 7099/">+94 71 717 7099
         </div>
     </div>
 </body>
