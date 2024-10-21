@@ -135,9 +135,10 @@ class LegalAdviceController extends Controller
                     $details = [
                         'OrderNo' => $resp->OrderNo ,
                         'TypeOfOrder' => 'Legal Advice' ,
-                        'CreateDate' => date('Y-m-d H:i:s'),
+                        'created_at' => date('Y-m-d H:i:s'),
                         'Message' => $client->Message ,
                         'bodyType' => '3' 
+                        
                         
                     ];
             
