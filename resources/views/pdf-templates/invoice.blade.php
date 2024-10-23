@@ -85,10 +85,10 @@
             font-size: 14px;
             color: #666;
         }
-
-        .invoice-compinfo {
-            text-align: center;
-            font-size: 14px;
+        .company-details {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #555;
         }
     </style>
 </head>
@@ -140,7 +140,12 @@
             <p>LKR. {{ $data["totalAmount"] }}.00</p>
         </div>
         <div class="invoice-footer">
-            <p>Thank you for your order!</p>
+            <p style="margin-left: 380px;">Thank you for your order!</p>
+            <div class="company-details">
+                <p>No.71/D, 1st Floor, High Level Plaza , Delkanda, Nugegoda, Sri Lanka.</p>
+                <p>Phone: +94 11 282 6212, Mobile: +94 71 362 3018, Mobile: +94 71 717 7099</p>
+                <p>Email: itranslate.lk@gmail.com, Email: info@itranslate.lk</p>
+            </div>
         </div>
         <div class="invoice-compinfo">
             <p>No.71/D , 1St Floor , High Level Plaza , Delkanda ,Nugegoda,</p>
