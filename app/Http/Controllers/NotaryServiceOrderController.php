@@ -80,13 +80,19 @@ class NotaryServiceOrderController extends Controller
                             $natureOfSignatures[] = [
                                 'name' => isset($person['name']) ? $person['name'] : null,
                                 'address' => isset($person['address']) ? $person['address'] : null,
-                                'adultIdNumber' => isset($person['adultIdNumber']) ? $person['adultIdNumber'] : null,
-                                'bcNumber' => isset($person['bcNumber']) ? $person['bcNumber'] : null,
-                                'drivingLicNo' => isset($person['drivingLicNo']) ? $person['drivingLicNo'] : null,
+                                //'adultIdNumber' => isset($person['adultIdNumber']) ? $person['adultIdNumber'] : null,
+                                'adultIdNumber' => $this->decodeImageData(isset($person['adultNicImage']) ? $person['adultNicImage'] : null),
+                                //'bcNumber' => isset($person['bcNumber']) ? $person['bcNumber'] : null,
+                                'bcNumber' => $this->decodeImageData(isset($person['bcNumberImage']) ? $person['bcNumberImage'] : null),
+                                //'drivingLicNo' => isset($person['drivingLicNo']) ? $person['drivingLicNo'] : null,
+                                'drivingLicNo' => $this->decodeImageData(isset($person['drivingLicImage']) ? $person['drivingLicImage'] : null),
                                 'email' => isset($person['email']) ? $person['email'] : null,
-                                'mcNumber' => isset($person['mcNumber']) ? $person['mcNumber'] : null,
-                                'nicNumber' => isset($person['nicNumber']) ? $person['nicNumber'] : null,
-                                'passportNo' => isset($person['passportNo']) ? $person['passportNo'] : null,
+                                //'mcNumber' => isset($person['mcNumber']) ? $person['mcNumber'] : null,
+                                'mcNumber' => $this->decodeImageData(isset($person['mcNumberImage']) ? $person['mcNumberImage'] : null),
+                                //'nicNumber' => isset($person['nicNumber']) ? $person['nicNumber'] : null,
+                                'nicNumber' => $this->decodeImageData(isset($person['nicImage']) ? $person['nicImage'] : null),
+                                //'passportNo' => isset($person['passportNo']) ? $person['passportNo'] : null,
+                                'passportNo' => $this->decodeImageData(isset($person['passportImage']) ? $person['passportImage'] : null),
                                 'personCategory' => isset($person['personCategory']) ? $person['personCategory'] : null,
                                 'phoneNumber' => isset($person['phoneNumber']) ? $person['phoneNumber'] : null,
                                 'natureOfSignature' => $this->decodeImageData(isset($person['natureOfSignature']) ? $person['natureOfSignature'] : null),
@@ -307,12 +313,18 @@ class NotaryServiceOrderController extends Controller
         } else {
 
             try {
+                
                 $resp = $this->NotaryServiceOrder->get_order_by_invoice($invoiceNo);
+                
 
                 if ($resp) {
-                    $dataList['firstDocType'] = json_decode($resp->doc_1);
-                    $dataList['secondDocType'] = json_decode($resp->doc_2);
-                    $dataList['thirdDocType'] = json_decode($resp->doc_3);
+                  
+                    $decodedResp = json_decode($resp, true);
+                    $dataList['firstDocType'] = !empty($decodedResp['doc_1']) ? json_decode($decodedResp['doc_1']) : null;
+                    $dataList['secondDocType'] = !empty($decodedResp['doc_2']) ? json_decode($decodedResp['doc_2']) : null;
+                    $dataList['thirdDocType'] = !empty($decodedResp['doc_3']) ? json_decode($decodedResp['doc_3']) : null;
+                    // dd(!empty($decodedResp['notary_person_json']) ? json_decode($decodedResp['notary_person_json']) : null);
+                    $dataList['notorypersonDocType'] = !empty($decodedResp['notary_person_json']) ? json_decode($decodedResp['notary_person_json']) : null;
 
                     $dataList['totalAmount'] = $resp['total_amt'];
                     $dataList['bankSlip'] = false;

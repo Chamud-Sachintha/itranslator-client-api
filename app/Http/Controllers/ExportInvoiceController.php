@@ -32,6 +32,7 @@ class ExportInvoiceController extends Controller
     }
 
     public function exportInvoiceAsPDF(Request $request) {
+        //echo("Done");
         $invoiceNo = (is_null($request->invoiceNo) || empty($request->invoiceNo)) ? "" : $request->invoiceNo;
         $deliveryMethod = (is_null($request->deliveryMethod) || empty($request->deliveryMethod)) ? "" : $request->deliveryMethod;
         $deliveryTimeType = (is_null($request->deliveryTimeType) || empty($request->deliveryTimeType)) ? "" : $request->deliveryTimeType;
@@ -44,7 +45,7 @@ class ExportInvoiceController extends Controller
         $fullName = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
         $address = (is_null($request->address) || empty($request->address)) ? "" : $request->address;
         $mobileNumber = (is_null($request->mobileNumber) || empty($request->mobileNumber)) ? "" : $request->mobileNumber;
-
+       
         if ($invoiceNo == "") {
             return $this->AppHelper->responseMessageHandle(0, "Required Fields are Missig.");
         }   
@@ -74,7 +75,7 @@ class ExportInvoiceController extends Controller
             "documentObjectArray" => $valueObjArray,
             "totalAmount" => $totalAmount
         ];
-
+        //dd($dataList);
         $fileName = "waybill";
         $pdf = Pdf::loadView('pdf-templates.invoice', array('data' => $dataList))->setPaper('a4', 'portrait');
 
