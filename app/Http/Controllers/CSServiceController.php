@@ -370,7 +370,7 @@ class CSServiceController extends Controller
     
                 $resp = $this->OrderAssign->get_order_details($request->invoiceNo);
     
-            
+           
                     // Assuming $resp is an associative array
                     $dataList = [
                         'invoiceNo' => $resp['invoiceNo'],
@@ -387,7 +387,7 @@ class CSServiceController extends Controller
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
                 
             } catch (\Exception $e) {
-                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+                return $this->AppHelper->responseMessageHandle(0, $resp);
             }
         }
     }

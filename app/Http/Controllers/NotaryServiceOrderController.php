@@ -70,11 +70,11 @@ class NotaryServiceOrderController extends Controller
                 $notaryServiceOrder = array();
 
                 if ($request->notaryServicePersonList) {
-                    $natureOfSignatures = []; // Initialize the array to store person data
+                    $natureOfSignatures = []; 
 
-                    // Loop through each person in the list
+                   
                     foreach ($request->notaryServicePersonList as $person) {
-                        // Check if natureOfSignature exists and is not empty for this person
+                        
                         if (isset($person['natureOfSignature']) && !empty($person['natureOfSignature'])) {
                             // Add the person's data to the $natureOfSignatures array
                             $natureOfSignatures[] = [
@@ -456,7 +456,7 @@ class NotaryServiceOrderController extends Controller
 
         foreach ($base64Array as $key => $value) {
             $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $value));
-            $imageFileName = 'image_' . time() . $key . '.png';
+            $imageFileName = 'image_' . time() . uniqid() . '.png';
 
             file_put_contents(public_path() . '/images' . '/' . $imageFileName, $imageData);
             $jsonEncodeImageData[$key] = $imageFileName;    
