@@ -315,7 +315,7 @@ class LegalAdviceController extends Controller
         } else {
 
             try {
-
+                $filteredItems = [];
                 $resp = $this->LegalAdviceSerivce->Get_Doc_Details($OrderNo);
                 foreach ($resp as $resp) {
                     if ($resp !== null) {
