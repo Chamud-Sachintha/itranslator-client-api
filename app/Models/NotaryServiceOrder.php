@@ -29,6 +29,7 @@ class NotaryServiceOrder extends Model
         'local_gov',
         'district',
         'land_reg_office',
+        'security_deposit',
         'notary_person_json',
         'total_amt',
         'payment_status',
@@ -60,6 +61,7 @@ class NotaryServiceOrder extends Model
         $map['local_gov'] = $notaryOrderInfo['localGov'];
         $map['district'] = $notaryOrderInfo['district'];
         $map['land_reg_office'] = $notaryOrderInfo['lro'];
+        $map['security_deposit'] = $notaryOrderInfo['secDeposit'];
         $map['notary_person_json'] = $notaryOrderInfo['notaryPersonJson'];
         $map['payment_status'] = $notaryOrderInfo['paymentStatus'];
         $map['order_status'] = $notaryOrderInfo['orderStatus'];
